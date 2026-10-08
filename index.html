@@ -104,6 +104,20 @@ box-shadow:0 8px 24px rgba(0,0,0,.35);display:none}
 .clr{margin-left:10px;background:none;border:0;color:var(--acc);cursor:pointer;font:inherit;
 font-size:.85rem;text-decoration:underline;padding:0}
 dialog h3+h4{margin-top:16px}
+.lb{width:23px;height:23px;border-radius:50%;border:2px solid var(--line);background:none;color:transparent;
+font-size:.7rem;cursor:pointer;display:grid;place-items:center;flex:none;padding:0}
+.lb.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.lsec .lh h2{font-size:clamp(1rem,2.4vw,1.2rem)}
+.lsec p{margin:0 0 12px;color:var(--muted);font-size:.92rem}
+.lsec.learned .lh h2{opacity:.62}
+.cmpw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table.cmp{width:100%;border-collapse:collapse;font-size:.8rem;min-width:660px}
+table.cmp th,table.cmp td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+table.cmp thead th{background:var(--bg2);color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:.7rem}
+table.cmp tbody td:first-child{color:var(--acc);font-weight:600;white-space:nowrap;background:var(--bg2)}
+table.cmp pre{margin:0;font-size:.75rem}
+table.cmp tr:last-child td{border-bottom:0}
+#cmpWrap.col .cmpw{display:none}
 @media(max-width:560px){dialog{width:100vw;max-width:100vw;position:fixed;inset:auto 0 0 0;margin:0;
 border-radius:18px 18px 0 0;max-height:92vh;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 dialog::backdrop{background:rgba(0,0,0,.65)}}
@@ -122,7 +136,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <div class="stats"><div class="st"><b>12</b><span>Learning Levels</span></div><div class="st"><b>150+</b><span>Topics</span></div><div class="st"><b id="spc">0</b><span>LeetCode Problems</span></div><div class="st"><b>Spring Boot</b><span>Included</span></div></div>
 </header>
 <main id="roadmap">
-<div class="vt"><button id="vr" class="on" type="button">Roadmap</button><button id="vpb" type="button">Problems</button></div>
+<div class="vt"><button id="vr" class="on" type="button">Roadmap</button><button id="vpb" type="button">Problems</button><button id="vl" type="button">Languages</button></div>
 <div id="viewR">
 <div class="ov"><div class="row"><span>Your Progress <small id="oc"></small></span><b id="op">0%</b></div><div class="bar"><i id="ob"></i></div><button class="rst" id="rs">Reset progress</button></div>
 <div class="tb"><input id="q" type="search" placeholder="Search topics…" aria-label="Search topics"><div class="ch" id="ch"><button class="on" data-d="">All</button><button data-d="0">Beginner</button><button data-d="1">Intermediate</button><button data-d="2">Advanced</button></div><button class="ic" id="ct">▶ Continue</button><button class="ic" id="ex">Collapse all</button></div>
@@ -134,6 +148,13 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <div class="tb"><input id="pq" type="search" placeholder="Search problems&hellip;" aria-label="Search problems"><div class="ch" id="pch"><button class="on" data-d="">All</button><button data-d="0">Easy</button><button data-d="1">Medium</button><button data-d="2">Hard</button></div><button class="ic" id="pctn">&#9654; Next unsolved</button><select id="pt" aria-label="Filter by topic"></select><button class="ic" id="psh">Solved at top</button></div>
 <p id="pno" hidden style="color:var(--muted)">No problems match your search.<button class="clr" id="clrP" type="button">Clear filters</button></p>
 <div id="psw"></div>
+</section>
+<section id="viewL" hidden>
+<div class="ov"><div class="row"><span>Syntax topics learned <small id="lcn"></small></span><b id="lpp">0%</b></div><div class="bar"><i id="lpb"></i></div><button class="rst" id="lrs">Reset learned</button></div>
+<section class="ps" id="cmpWrap"><div class="lh" role="button" tabindex="0"><h2><span class="car">&#9662;</span> Same task in C, C++, Python and JavaScript</h2><span>cheat sheet</span></div><div class="cmpw"><table class="cmp" id="cmp"></table></div></section>
+<div class="tb"><div class="ch" id="lch"><button class="on" data-l="0">C</button><button data-l="1">C++</button><button data-l="2">Python</button><button data-l="3">JavaScript</button><button data-l="4">SQL</button><button data-l="5">Java</button><button data-l="6">Bash</button></div><input id="lq" type="search" placeholder="Search syntax topics&hellip;" aria-label="Search syntax topics"><button class="ic" id="lexp">Expand all</button></div>
+<p id="lno" hidden style="color:var(--muted)">No syntax topics match your search.<button class="clr" id="clrL" type="button">Clear search</button></p>
+<div id="lsw"></div>
 </section>
 </main>
 <footer>Every topic has an explanation, a code example and a practice problem with a solution. The Problems tab is a LeetCode-style bank grouped topic by topic, searchable and filterable by difficulty. Click a card for details; tap its circle to mark it complete. Progress is saved in your browser. Happy coding! ☕</footer>
@@ -6440,10 +6461,1230 @@ $("pch").onclick=e=>{const b=e.target.closest("button");if(!b)return;pd_=b.datas
 [...$("pch").children].forEach(x=>x.classList.toggle("on",x===b));render()};
 $("psh").onclick=()=>{pshown=!pshown;$("psh").classList.toggle("on",pshown);render()};
 $("prs").onclick=()=>{if(confirm("Reset all solved problems?")){PSOLVED={};psave();pupd();render()}};
-function view(v){const r=v==="r";$("viewR").hidden=!r;$("viewP").hidden=r;$("vr").classList.toggle("on",r);$("vpb").classList.toggle("on",!r)}
+function view(v){const r=v==="r",p=v==="p",l=v==="l";$("viewR").hidden=!r;$("viewP").hidden=!p;$("viewL").hidden=!l;$("vr").classList.toggle("on",r);$("vpb").classList.toggle("on",p);$("vl").classList.toggle("on",l)}
 $("vr").onclick=()=>view("r");$("vpb").onclick=()=>view("p");
 $("spc").textContent=PROB.length;
 pupd();render();
+
+var LANG_C={
+"0-0":{d:`Every C program begins executing in the function named main, which returns an int status code to the operating system. All statements live inside functions, and preprocessor directives such as #include must appear before any function definition.`,s:`#include <stdio.h>
+
+int main(void) {
+    int x = 21;
+    int doubled = x * 2;
+    printf("%d\\n", doubled);
+    return 0;
+}`},
+"0-1":{d:`A comment is ignored by the compiler and is written either between slash and star pairs or after two slashes to the end of the line. A variable is a named piece of memory with a declared type, which tells the compiler how much space to reserve and how to interpret the stored bits.`,s:`#include <stdio.h>
+int main(void) {
+    /* A block comment
+       can span lines. */
+    // A line comment stops at the line break.
+    int count = 10;       // whole number
+    double price = 9.99;  // decimal value
+    char letter = 'A';   // single character
+    count = count + 1;
+    printf("%d\\n", count);
+    return 0;
+}`},
+"0-2":{d:`The stdio.h header provides printf for formatted output and scanf for reading typed input from the keyboard. The conversion specifier in a format string must match the type of the value being passed, otherwise the behavior is undefined.`,s:`#include <stdio.h>
+int main(void) {
+    int age; double height;
+    printf("Age: ");
+    if (scanf("%d", &age) != 1) {
+        printf("invalid input\\n");
+        return 1;
+    }
+    scanf("%lf", &height);
+    printf("%d years, %.2f m\\n", age, height);
+    return 0;
+}`},
+"0-3":{d:`Arithmetic operators work on both integer and floating point types, and mixing them triggers an implicit conversion, so dividing two integers silently discards the fractional part. An explicit cast forces the conversion you actually want, such as turning an integer division into a real one.`,s:`#include <stdio.h>
+int main(void) {
+    int a = 7, b = 2;
+    printf("integer division: %d\\n", a / b);
+    printf("real division: %.2f\\n", (double)a / b);
+    double d = 3.9;
+    int truncated = (int)d;   /* drops the fraction */
+    printf("cast to int gives %d\\n", truncated);
+    return 0;
+}`},
+"0-4":{d:`An if statement runs a block only when its condition is true, and else supplies an alternative branch. A switch dispatches to the label matching a single value, which keeps a long chain of constant comparisons readable.`,s:`#include <stdio.h>
+int main(void) {
+    int op = 2, a = 6, b = 3;
+    switch (op) {
+        case 1: printf("a + b = %d\\n", a + b); break;
+        case 2: printf("a - b = %d\\n", a - b); break;
+    }
+    if (a % b == 0) printf("b divides a\\n");
+    else            printf("b does not divide a\\n");
+    return 0;
+}`},
+"0-5":{d:`A for loop repeats a fixed number of times because it bundles initialization, the continuation condition, and the update into one statement. The while form repeats while a condition holds, and the do-while form guarantees that its body runs at least once.`,s:`#include <stdio.h>
+int main(void) {
+    int total = 0;
+    for (int i = 1; i <= 5; i++) {
+        total += i;
+    }
+    printf("sum = %d\\n", total);
+    int n = 3;
+    while (n > 0) { printf("%d\\n", n); n--; }
+    return 0;
+}`},
+"0-6":{d:`A function is a named block of code with a declared return type and a parameter list that runs when it is called. Arguments are passed by value, so the callee works on a copy and cannot modify the caller's variable unless a pointer is passed.`,s:`#include <stdio.h>
+
+int add(int a, int b) {
+    return a + b;
+}
+int main(void) {
+    int x = 10;
+    printf("3 + 4 = %d\\n", add(3, 4));
+    printf("x + 5 = %d\\n", add(x, 5));  /* x unchanged */
+    return 0;
+}`},
+"0-7":{d:`An array stores a fixed number of elements of one type in contiguous memory, and each element is reached by its index. A string is simply an array of char terminated by a null byte, and the string.h routines such as strlen and strcpy rely on that convention.`,s:`#include <stdio.h>
+#include <string.h>
+int main(void) {
+    int numbers[4] = {10, 20, 30, 40}, sum = 0;
+    for (int i = 0; i < 4; i++) {
+        sum += numbers[i];
+    }
+    printf("sum = %d\\n", sum);
+    char *name = "hello";
+    printf("%s has %zu chars\\n", name, strlen(name));
+    return 0;
+}`},
+"0-8":{d:`A pointer is a variable whose value is the memory address of another variable, which lets you refer to data indirectly and pass it by reference. The ampersand operator yields the address of an object, while the asterisk operator dereferences a pointer so you can read or write the object it points to.`,s:`#include <stdio.h>
+int main(void) {
+    int value = 42;
+    int *p = &value;   /* p holds the address of value */
+    printf("value = %d\\n", value);
+    printf("address = %p\\n", (void *)p);
+    printf("through pointer = %d\\n", *p);
+    *p = 100;          /* writes to value itself */
+    printf("value = %d\\n", value);
+    return 0;
+}`},
+"0-9":{d:`A struct groups several values of possibly different types into one named type so related data can be handled as a single object. Members are reached with the dot operator on a struct variable and with the arrow operator on a pointer to a struct.`,s:`#include <stdio.h>
+struct Point {
+    int x, y;
+};
+int main(void) {
+    struct Point p = {3, 4};
+    struct Point *ptr = &p;
+    printf("(%d, %d)\\n", p.x, p.y);
+    ptr->x = 10;              /* same as p.x = 10 */
+    printf("(%d, %d)\\n", ptr->x, ptr->y);
+    return 0;
+}`},
+"0-10":{d:`The malloc function reserves a block of memory at run time and returns a pointer to its first byte, or NULL when the request fails. Nothing releases the block automatically, so every successful allocation must be matched by exactly one call to free.`,s:`#include <stdio.h>
+#include <stdlib.h>
+int main(void) {
+    int *arr = malloc(5 * sizeof *arr);
+    if (arr == NULL) return 1;
+    for (int i = 0; i < 5; i++) {
+        arr[i] = i * i;
+    }
+    printf("%d %d %d\\n", arr[0], arr[1], arr[4]);
+    free(arr); arr = NULL;   /* block released */
+    return 0;
+}`},
+"0-11":{d:`The stdio.h file streams let a program open a file, read or write it, and then close it so the operating system reclaims the handle. An open stream is a FILE pointer, fopen returns NULL when the file cannot be opened, and fgets reads one line at a time.`,s:`#include <stdio.h>
+int main(void) {
+    FILE *fp = fopen("data.txt", "w");
+    if (fp == NULL) return 1;
+    fprintf(fp, "first line\\nsecond line\\n");
+    fclose(fp);
+    fp = fopen("data.txt", "r");
+    char buf[64];
+    while (fgets(buf, sizeof buf, fp) != NULL) printf("%s", buf);
+    fclose(fp);
+    return 0;
+}`}
+};
+var LANG_CPP={
+"1-0":{d:`A C++ program runs by starting at the main function, which the operating system calls first; statements inside main execute top to bottom and return 0 signals success.`,s:`#include <iostream>
+
+int main() {
+    std::cout << "Hello, C++!" << '\\n';
+    int answer = 6 * 7;
+    std::cout << "The answer is " << answer << '\\n';
+    return 0;
+}`},
+"1-1":{d:`C++ is statically typed, so every variable has a type fixed at compile time; the const qualifier makes a variable read only after its initialization.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    int count = 10;           // whole number
+    double price = 19.99;     // floating point
+    char grade = 'A';         // single character
+    bool active = true;       // true or false
+    const int maxUsers = 100; // fixed from here on
+    std::string title = "Roadmap";
+    count = count + 1;         // allowed
+    std::cout << count << price << " " << grade << active << maxUsers << title << '\\n';
+    return 0;
+}`},
+"1-2":{d:`cin reads values from standard input and cout writes them to standard output; both use stream operators that chain together in one expression.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::cout << "Enter your name: ";
+    std::string name;
+    std::getline(std::cin, name);
+    std::cout << "Enter your age: ";
+    int age = 0;
+    std::cin >> age;
+    std::cout << name << " is " << age << " years old.\\n";
+    return 0;
+}`},
+"1-3":{d:`std::string is a growable sequence of characters with built in methods for length, concatenation, searching and slicing, and it manages its own memory.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string text = "Java";
+    text += " Mastery";                  // append
+    std::cout << text << '\\n';
+    std::cout << "Length: " << text.length() << '\\n';
+    std::size_t pos = text.find("Mastery");
+    std::cout << "Found at: " << pos << '\\n';
+    std::string part = text.substr(0, 4);
+    std::cout << part << '\\n';          // std::endl also flushes
+    return 0;
+}`},
+"1-4":{d:`if and else pick between branches at runtime, while switch matches one value against a list of cases and stops at the first break it reaches.`,s:`#include <iostream>
+
+int main() {
+    int day = 6;
+    switch (day) {
+        case 6:
+        case 7: std::cout << "Weekend\\n"; break;
+        default: std::cout << "Weekday\\n";
+    }
+    int age = 20;
+    if (age >= 18) std::cout << "Adult\\n";
+    else std::cout << "Minor\\n";
+    return 0;
+}`},
+"1-5":{d:`for, while and do while repeat a block a known or unknown times, and the range based for walks the elements of a container directly.`,s:`#include <iostream>
+#include <vector>
+
+int main() {
+    for (int i = 0; i < 3; ++i)
+        std::cout << "i = " << i << '\\n';
+    std::vector<int> nums = {4, 5, 6};
+    for (int value : nums) {           // range based for
+        std::cout << "value " << value << '\\n';
+    }
+    return 0;
+}`},
+"1-6":{d:`Functions group reusable logic; default arguments let callers skip trailing parameters, and a reference parameter binds to the caller's object instead of copying it.`,s:`int add(int a, int b = 10) {   // b defaults to 10
+    return a + b;
+}
+
+void double_it(int& value) {   // no copy, edits caller
+    value *= 2;
+}
+
+int main() {
+    int score = 20;
+    double_it(score);
+    return score - 40;           // returns 0
+}`},
+"1-7":{d:`std::vector is a resizable contiguous sequence that grows on demand and gives constant time random access by index.`,s:`#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> scores = {70, 85, 90};
+    scores.push_back(95);              // append at the end
+    scores.insert(scores.begin(), 60); // insert at the front
+    std::cout << "Size: " << scores.size() << '\\n';
+    std::cout << "Front: " << scores.front() << '\\n';
+    scores.erase(scores.begin());      // drop the first element
+    std::cout << "Front now: " << scores.front() << '\\n';
+    return 0;
+}`},
+"1-8":{d:`A map stores key to value pairs with fast lookup by key, and a set keeps unique elements sorted for quick membership tests.`,s:`#include <iostream>
+#include <map>
+#include <set>
+
+int main() {
+    std::map<std::string, int> ages = {{"alice", 30}, {"bob", 25}};
+    for (const auto& e : ages) {
+        std::cout << e.first << " -> " << e.second << '\\n';
+    }
+    std::set<int> seen = {3, 1, 3, 2};  // duplicate 3 is dropped
+    std::cout << "Unique count: " << seen.size() << '\\n';
+    return 0;
+}`},
+"1-9":{d:`A class bundles data members and member functions into a single type, using a constructor to set up each object and access specifiers to control visibility.`,s:`#include <iostream>
+class Rectangle {
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+    double area() const { return width * height; }
+private:
+    double width, height;
+};
+
+int main() {
+    Rectangle box(4.0, 5.0);
+    std::cout << "Area: " << box.area() << '\\n';
+    return 0;
+}`},
+"1-10":{d:`A derived class extends a base class, and marking a base function virtual makes the derived override run even through a base class pointer.`,s:`#include <iostream>
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual const char* name() const = 0;    // pure virtual
+}; class Circle : public Shape {
+public:
+    const char* name() const override { return "Circle"; }
+};
+int main() {
+    Shape* p = new Circle();                 // base class pointer
+    std::cout << p->name() << '\\n';         // calls Circle
+    delete p; return 0;
+}`},
+"1-11":{d:`You can define operators such as + or == for your own types so they behave like built in types inside expressions.`,s:`#include <iostream>
+class Vec2 {
+public:
+    Vec2(double x, double y) : x(x), y(y) {}
+    Vec2 operator+(const Vec2& o) const { return Vec2(x + o.x, y + o.y); }
+public:
+    double x, y;                     // plain data members
+};
+int main() {
+    Vec2 a(1.0, 2.0), b(3.0, 4.0);
+    Vec2 c = a + b;                  // uses the overloaded +
+    std::cout << c.x << " " << c.y << '\\n';
+    return 0;
+}`},
+"1-12":{d:`A template defines generic code whose types are chosen by the compiler from the arguments, so one implementation serves many types.`,s:`#include <iostream>
+#include <string>
+
+template <typename T>
+T max_of(const T& a, const T& b) {
+    return (a < b) ? b : a;
+}
+
+int main() {
+    std::cout << max_of(3, 9) << '\\n';
+    std::string s = max_of(std::string("apple"), std::string("pear"));
+    std::cout << s << '\\n';
+    return 0;
+}`},
+"1-13":{d:`unique_ptr owns an object alone and hands ownership over when moved, while shared_ptr uses reference counting so the object dies with the last owner.`,s:`#include <iostream>
+#include <memory>
+#include <string>
+
+int main() {
+    auto first = std::make_shared<std::string>("shared data");
+    std::shared_ptr<std::string> second = first;  // second owner
+    auto owner = std::make_unique<int>(42);        // sole owner
+    std::cout << *owner << " " << *second << '\\n';
+    std::cout << "Use count: " << second.use_count() << '\\n';
+    auto moved = std::move(owner);                 // ownership moves
+    std::cout << *moved << '\\n';
+    return 0;
+}`},
+"1-14":{d:`The algorithm library operates on any container through iterators, so sort, find and accumulate do the looping work instead of you.`,s:`#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <vector>
+int main() {
+    std::vector<int> nums = {5, 3, 8, 1};
+    std::sort(nums.begin(), nums.end());      // sorts in place
+    for (int n : nums) std::cout << n << " ";
+    std::cout << '\\n';
+    auto it = std::find(nums.begin(), nums.end(), 8);
+    std::cout << "Found 8: " << (it != nums.end()) << '\\n';
+    std::cout << "Sum: " << std::accumulate(nums.begin(), nums.end(), 0) << '\\n';
+    return 0;
+}`}
+};
+var LANG_PY={
+"2-0":{d:`Comments start with a hash sign and run to the end of the line. Variables are created by assignment with no type keyword, and their names should follow snake_case conventions.`,s:`# This is a comment
+name = "Ada"
+age = 36
+PI = 3.14159
+
+print(name, age)
+print(f"{name} is {age} years old")`},
+"2-1":{d:`The print function writes to standard output, and input reads a line from the user as a string. Formatted output usually uses f-strings or the format method.`,s:`name = input("Enter your name: ")
+age = int(input("Enter your age: "))
+
+print("Hello,", name)
+print(f"{name} will be {age + 1} next year")
+print("Total:", age + 1)`},
+"2-2":{d:`Python supports arithmetic, comparison, logical, and membership operators. Since variables are dynamically typed, built-in functions like int, float, and str convert between types explicitly.`,s:`a = 10
+b = 3
+
+print(a + b, a - b, a * b, a / b, a // b, a % b, a ** b)
+print(a > b and b > 0, not (a == b))
+print(7 in [1, 2, 7], "py" in "python")
+
+x = "42"
+print(int(x) + 1, float("1.5"), str(100) + "!")`},
+"2-3":{d:`Conditional statements use if, elif, and else to choose between branches. Python relies on indentation rather than braces, and every branch must be indented consistently.`,s:`score = 78
+
+if score >= 90:
+    grade = "A"
+elif score >= 75:
+    grade = "B"
+elif score >= 60:
+    grade = "C"
+else:
+    grade = "F"
+
+print("Grade:", grade)`},
+"2-4":{d:`Loops iterate over sequences with for and repeat while a condition holds with while. The loop variable keeps its value after the loop, and break or continue control the flow.`,s:`fruits = ["apple", "banana", "cherry"]
+for fruit in fruits:
+    if fruit == "banana":
+        continue
+    print(fruit)
+total, n = 0, 5
+while n > 0:
+    total += n
+    n -= 1
+print("Sum 1..5:", total)
+for i, fruit in enumerate(fruits, 1):
+    print(i, fruit)`},
+"2-5":{d:`Strings are immutable sequences of characters that support indexing, slicing, and many built-in methods. They can be joined, split, replaced, and formatted without changing the original value.`,s:`text = "  Python Programming  "
+
+print(text.upper(), text.strip())
+print(text.strip()[0:6], text.strip()[-11:])
+print(text.strip().replace("Programming", "Language"))
+print("-".join(["a", "b", "c"]))
+print("py" in text.lower(), len(text))`},
+"2-6":{d:`Lists are ordered, mutable sequences that can hold mixed types and grow or shrink at any time. Methods such as append, insert, and remove change a list in place, while sorting and reversing return a new list.`,s:`nums = [5, 3, 9, 1]
+nums.append(7)
+nums.insert(0, 0)
+nums.remove(9)
+
+print(nums, len(nums))
+print(sorted(nums), sorted(nums, reverse=True))
+print(nums[1:3], nums[-1], nums.index(3))
+print(nums.pop(0), nums)`},
+"2-7":{d:`Tuples are ordered and immutable, so they work well as fixed records or dictionary keys. Sets are unordered collections of unique items that support fast membership tests and set operations.`,s:`point = (3, 7)
+print(point, point[0], len(point))
+
+a = {1, 2, 3}
+b = {3, 4}
+print(sorted(a | b), sorted(a & b), sorted(a - b))
+print(2 in a)
+
+a.add(5)
+a.discard(1)
+print(sorted(a))`},
+"2-8":{d:`Dictionaries store key-value pairs with average constant-time lookup. Keys must be hashable and unique, and the methods get, keys, values, and items cover most access patterns.`,s:`user = {"name": "Ada", "age": 36, "langs": ["python"]}
+user["country"] = "UK"
+user.update({"age": 37})
+
+print(user["name"], user.get("email", "none"))
+print(list(user.keys()), list(user.values()))
+for key, value in user.items():
+    print(key, "->", value)
+
+del user["age"]
+print("age" in user, len(user), user)`},
+"2-9":{d:`Functions are defined with def and can take parameters and return values. Parameters may have defaults, and *args or **kwargs let a function accept a variable number of arguments.`,s:`def greet(name, greeting="Hello"):
+    return f"{greeting}, {name}!"
+
+def average(*numbers):
+    return sum(numbers) / len(numbers)
+
+def summarize(**options):
+    return {k: v for k, v in options.items() if v}
+
+print(greet("Ada"), greet("Bob", greeting="Hi"))
+print(average(1, 2, 3, 4))
+print(summarize(a=1, b=2, c=False))`},
+"2-10":{d:`Comprehensions build a list or dictionary from an iterable in a single expression. They replace a loop that appends to a new collection and are usually faster and more readable.`,s:`nums = [1, 2, 3, 4, 5, 6]
+
+squares = [n * n for n in nums]
+evens = [n for n in nums if n % 2 == 0]
+pairs = {n: n * n for n in nums}
+lookup = {c: i for i, c in enumerate("abc")}
+
+print(squares)
+print(evens)
+print(pairs)
+print(lookup)
+print(sum(n for n in nums))`},
+"2-11":{d:`Classes define attributes and methods that bundle state and behavior together. The self parameter refers to the current instance, and dunder methods give custom behavior to operators and built-in functions.`,s:`class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def bark(self):
+        return f"{self.name} says woof"
+
+    def __str__(self):
+        return f"Dog named {self.name}"
+
+rex = Dog("Rex")
+print(rex.bark(), str(rex))`},
+"2-12":{d:`Exceptions handle runtime errors gracefully. A try block runs code that may fail, except clauses catch specific error types, and finally always executes regardless of the outcome.`,s:`def safe_divide(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("cannot divide by zero")
+    finally:
+        print("done")
+print(safe_divide(10, 2), safe_divide(1, 0))
+try:
+    int("abc")
+except ValueError as err:
+    print("caught:", err)`},
+"2-13":{d:`Modules are Python files whose definitions are imported by name, while packages are installed with pip and provide third-party libraries. Use an if name equals main guard to protect code that should run only as a script.`,s:`import math
+from collections import Counter
+
+print(math.pi, math.sqrt(16))
+print(Counter("mississippi").most_common(2))
+try:
+    import requests
+except ImportError:
+    print("requests not installed")
+if __name__ == "__main__":
+    print("running as a script")`},
+"2-14":{d:`Type hints annotate variables and function signatures so static checkers can catch mistakes early; they are not enforced at runtime. An f-string prefixes a string with f and interpolates expressions inside braces.`,s:`from typing import Optional
+
+def average(values: list[float], precision: int = 2) -> float:
+    return round(sum(values) / len(values), precision)
+
+def find(name: str) -> Optional[str]:
+    return name.title() if name else None
+
+total: float = average([1.0, 2.0, 4.0])
+print(f"mean = {total:.3f}")
+print(find("ada"), find(""))`}
+};
+var LANG_JS={
+"3-0":{d:`A line comment starts with two slashes, and a block comment is wrapped in slash-star and star-slash. Variables are declared with let or const, since var is legacy and should be avoided.`,s:`// A single line comment
+/* A block
+   comment */
+let name = "Ada";
+const MAX = 10;
+var legacy = 1; // discouraged
+console.log(name, MAX, legacy);`},
+"3-1":{d:`console.log writes to the standard output, while console.error writes to the error stream and console.warn issues a warning. On Node.js, read from the terminal with the readline module since there is no prompt function in the standard library.`,s:`import { stdin, stdout } from "node:readline";
+console.log("Hello, world!");
+console.error("Something failed");
+console.warn("Careful");
+const rl = stdin.createInterface({ input: process.stdin, output: stdout });
+rl.question("Your name? ", (answer) => {
+  console.log(\`Hi \x24{answer}\`);
+  rl.close();
+});`},
+"3-2":{d:`JavaScript has arithmetic, comparison, logical and bitwise operators, plus the loose equality operator that coerces types. Convert values explicitly with Number, String, parseInt or parseFloat instead of relying on implicit coercion.`,s:`console.log(7 + 2, 7 / 2, 2 ** 10);
+console.log(1 + "2", "3" * "4");
+const n = "42px";
+console.log(Number("42"), parseInt(n, 10));
+console.log(parseFloat("3.5kg"));
+console.log(String(99), Boolean(0));
+console.log(10 === "10", 10 == "10");`},
+"3-3":{d:`An if/else if/else chain runs the first branch whose condition is truthy, and switch compares one value against a list of case labels with strict equality. The break statement exits a case, and a default clause runs when nothing matched.`,s:`const score = 78;
+if (score < 50) console.log("Fail");
+else if (score < 90) console.log("Pass");
+else console.log("Excellent");
+switch (score) {
+  case 100: console.log("Perfect"); break;
+  case 78: console.log("Seventy-eight"); break;
+  default: console.log("Unknown");
+}`},
+"3-4":{d:`Use for, while and do...while to repeat code, and for...of to walk over the values of an iterable. The for...in loop enumerates the keys of an object, which is different from for...of.`,s:`for (let i = 0; i < 3; i++) console.log("for", i);
+let n = 2;
+while (n > 0) { console.log("while", n); n--; }
+do console.log("do runs at least once"); while (false);
+for (const ch of "abc") console.log("of", ch);
+for (const key in { a: 1, b: 2 }) console.log("in", key);`},
+"3-5":{d:`A function declaration is hoisted, while a function expression is assigned to a variable. Default parameters, rest parameters and named arguments all work, and every function returns undefined unless it returns a value.`,s:`function add(a, b = 10) {
+  return a + b;
+}
+const multiply = function (a, b) {
+  return a * b;
+};
+function sum(...nums) {
+  return nums.reduce((t, n) => t + n, 0);
+}
+console.log(add(5), add(5, 2));
+console.log(multiply(4, 3));
+console.log(sum(1, 2, 3, 4));`},
+"3-6":{d:`An arrow function is a compact function expression with no own this binding, so its this comes from the surrounding scope. Use it for callbacks and short bodies, and prefer a normal function when you need a dynamic this.`,s:`const double = (n) => n * 2;
+const add = (a, b) => a + b;
+const makeCounter = () => {
+  let count = 0;
+  return () => ++count;
+};
+const counter = makeCounter();
+counter();
+console.log(double(21), add(2, 3));
+console.log(counter());
+console.log([1, 2, 3].map((n) => n ** 2));`},
+"3-7":{d:`A template literal is delimited by backticks and supports embedded expressions, plus multi-line text without string concatenation. The escape sequences of a normal string still work, and tagged templates let you post-process the parts.`,s:`const name = "Ada";
+const age = 36;
+const greeting = \x60Hello \x24{name}, you are \x24{age} years old.\x60;
+console.log(greeting);
+const total = 3;
+const price = 12.5;
+console.log(\x60Cart: \x24{total} items for \x24{(total * price).toFixed(2)}\x60);
+const line = \x60first\\nsecond\x60;
+console.log(line);`},
+"3-8":{d:`An array is an ordered list of values that grows and shrinks with push, pop, shift and unshift. Many methods are non-destructive, returning a new array instead of changing the original.`,s:`const fruits = ["apple", "banana"];
+fruits.push("cherry");
+console.log(fruits, fruits.length);
+console.log(fruits.pop(), fruits);
+const nums = [3, 1, 4, 1, 5];
+console.log(nums.slice(1, 3));
+console.log([...nums].sort((a, b) => a - b));
+const merged = [...fruits, ...nums];
+console.log(merged.indexOf(5), merged.includes(4));
+console.log(nums.concat([9]), nums.flat());`},
+"3-9":{d:`An object stores values under string keys and its methods are just functions held as properties. Create one with an object literal, access fields with dot or bracket notation, and use optional chaining to avoid errors on missing values.`,s:`const user = {
+  name: "Ada", age: 36,
+  address: { city: "London" },
+  greet() { return \`Hi, I am \x24{this.name}\`; }
+};
+user.email = "ada@example.com";
+console.log(user.name, user["age"]);
+console.log(user.address?.city, user.phone?.number);
+const { name, ...rest } = user;
+console.log(name, rest, Object.keys(user));
+console.log({ ...user, active: true }.active);`},
+"3-10":{d:`Destructuring pulls values out of arrays and objects into new bindings, the spread operator copies or merges, and rest collects what is left. The same syntax is used on the left side of a function parameter to unpack the arguments.`,s:`const [first, second, ...others] = [10, 20, 30, 40];
+console.log(first, second, others);
+const { name: who, age } = { name: "Ada", age: 36 };
+console.log(who, age);
+const base = { id: 1, name: "Ada" };
+const copy = { ...base, age: 36 };
+console.log(copy);
+function total({ price, qty }, tax = 0.2) {
+  return (price * qty) * (1 + tax);
+}
+console.log(total({ price: 10, qty: 3 }));`},
+"3-11":{d:`map transforms every item and returns a new array, filter keeps the items that pass a test, and reduce folds the array into a single value. Each one takes a callback, and they chain well in a pipeline.`,s:`const nums = [1, 2, 3, 4, 5, 6];
+const doubled = nums.map((n) => n * 2);
+const evens = nums.filter((n) => n % 2 === 0);
+const total = nums.reduce((sum, n) => sum + n, 0);
+console.log(doubled, evens, total);
+const upper = ["ada", "bob", "carol"]
+  .map((n) => n.toUpperCase())
+  .filter((n) => n.length > 3);
+console.log(upper);
+console.log(nums.find((n) => n > 3), nums.some((n) => n > 5));
+console.log(nums.includes(4), nums.indexOf(9));`},
+"3-12":{d:`A class bundles a constructor with methods on the prototype, and inheritance uses extends and super. Fields declared in the body are set per instance, and private fields marked with a hash are not reachable from outside the class.`,s:`class Shape {
+  #sides;
+  constructor(sides) { this.name = "shape"; this.#sides = sides; }
+  describe() { return \`A \x24{this.name} with \x24{this.#sides} sides\x60; }
+}
+class Square extends Shape {
+  constructor(side) { super(4); this.name = "square"; this.side = side; }
+  area() { return this.side ** 2; }
+}
+const sq = new Square(3);
+console.log(sq.describe(), sq.area(), sq instanceof Shape);`},
+"3-13":{d:`A Promise represents a value that will be available later, settling as either fulfilled or rejected. The async keyword marks a function that always returns a promise, and await pauses that function until the promise settles.`,s:`const delay = (ms, value) =>
+  new Promise((resolve) => setTimeout(() => resolve(value), ms));
+async function loadUser() {
+  try {
+    const user = await delay(100, { name: "Ada" });
+    console.log("Loaded", user.name);
+  } catch (err) {
+    console.error("Failed", err.message);
+  }
+}
+loadUser().then(() => console.log("always done"));
+Promise.all([delay(10, "a"), delay(10, "b")]).then(console.log);`},
+"3-14":{d:`The DOM represents the document as a tree of nodes that scripts can query and update. Select an element, change its text or attributes, register an event listener, and create new nodes with createElement and append.`,s:`const list = document.querySelector("#items");
+const btn = document.querySelector("button");
+btn.addEventListener("click", () => {
+  const value = document.querySelector("input").value.trim();
+  if (!value) return;
+  const li = document.createElement("li");
+  li.textContent = value;
+  li.classList.add("item");
+  list.appendChild(li);
+  console.log("added", value);
+});
+list.addEventListener("click", (e) => e.target.remove());`},
+"3-15":{d:`JSON is a text format built from a subset of JavaScript literal syntax. JSON.parse turns a string into a value and JSON.stringify turns a value back into a string, skipping functions and undefined.`,s:`const data = { name: "Ada", tags: ["math", "code"], age: 36 };
+const text = JSON.stringify(data); console.log(text);
+const parsed = JSON.parse(text);
+console.log(parsed.name, parsed.tags[1], parsed.age);
+console.log(JSON.stringify(data, null, 2));
+const [header, row] = "id,name\\n1,Ada".split("\\n");
+console.log(header.split(","), row.split(","));
+try {
+  JSON.parse("{ bad json }");
+} catch (err) {
+  console.log("parse error:", err.message);
+}`}
+};
+var LANG_SQL={
+"4-0":{d:`A comment begins with two dashes and runs to the end of the line, and any SQL client can run a statement directly from a script or console. Use comments to label the sections of a longer script.`,s:`-- Fetch a single employee by primary key
+SELECT id, name, dept, salary
+FROM employees
+WHERE id = 42;
+`},
+"4-1":{d:`SELECT lists the columns you want back, and WHERE filters rows with a condition. Operators, AND, OR, NOT and LIKE combine to narrow the result set.`,s:`SELECT id, name, dept, salary
+FROM employees
+WHERE dept = 'Sales'
+  AND salary >= 50000;
+`},
+"4-2":{d:`ORDER BY sorts rows by one or more columns, and LIMIT caps how many rows are returned. Add DESC for descending order and OFFSET to page through the results.`,s:`SELECT name, dept, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 5;
+
+-- Page two of the same list
+SELECT name, dept, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 5 OFFSET 5;
+`},
+"4-3":{d:`Aggregate functions collapse many rows into a single value. COUNT counts rows, SUM and AVG work on numbers, and MIN and MAX work on any comparable column.`,s:`SELECT COUNT(*)    AS headcount,
+       SUM(salary)   AS payroll,
+       AVG(salary)   AS avg_salary,
+       MIN(hired_on) AS first_hire,
+       MAX(hired_on) AS latest_hire
+FROM employees;
+`},
+"4-4":{d:`GROUP BY splits rows into buckets that share the same key values and runs an aggregate for each bucket. WHERE filters raw rows before grouping, while HAVING filters the grouped results.`,s:`SELECT dept,
+       COUNT(*) AS headcount,
+       AVG(salary) AS avg_salary
+FROM employees
+WHERE salary > 0
+GROUP BY dept
+HAVING COUNT(*) >= 3
+ORDER BY headcount DESC;
+`},
+"4-5":{d:`INSERT adds new rows, UPDATE changes existing rows, and DELETE removes rows. Each of them can affect many rows at once, so always pair them with a WHERE clause.`,s:`INSERT INTO departments (id, dept_name, budget)
+VALUES (4, 'Marketing', 250000);
+
+UPDATE employees
+SET salary = salary * 1.05
+WHERE dept = 'Marketing';
+
+DELETE FROM employees
+WHERE dept = 'Marketing' AND salary < 30000;
+`},
+"4-6":{d:`An INNER JOIN keeps only rows that match on both sides, a LEFT JOIN keeps every left row even without a match, and a CROSS JOIN returns every combination.`,s:`-- INNER JOIN: only matched pairs
+SELECT e.name, d.dept_name
+FROM employees AS e
+INNER JOIN departments AS d ON d.dept_name = e.dept;
+-- LEFT JOIN: all employees, dept_name may be NULL
+SELECT e.name, d.dept_name
+FROM employees AS e
+LEFT JOIN departments AS d ON d.dept_name = e.dept;
+-- CROSS JOIN: every employee against every department
+SELECT e.name, d.dept_name
+FROM employees AS e
+CROSS JOIN departments AS d;
+`},
+"4-7":{d:`A subquery is a SELECT nested inside another statement, wrapped in parentheses, that supplies values or filters the outer query. It can sit in a WHERE clause or in the select list.`,s:`SELECT name, salary
+FROM employees
+WHERE salary > (SELECT AVG(salary) FROM employees)
+  AND dept = 'Sales';
+
+SELECT name,
+       (SELECT COUNT(*) FROM employees AS m WHERE m.dept = e.dept) AS dept_size
+FROM employees AS e;
+`},
+"4-8":{d:`A common table expression, written with WITH, names a query so you can reuse it like a temporary view inside the same statement. It keeps long queries readable and lets you chain several of them.`,s:`WITH dept_totals AS (
+    SELECT dept, SUM(salary) AS payroll
+    FROM employees
+    GROUP BY dept
+)
+SELECT d.dept_name, t.payroll
+FROM dept_totals AS t
+JOIN departments AS d ON d.dept_name = t.dept
+WHERE t.payroll > 500000;
+`},
+"4-9":{d:`A window function computes across rows related to the current row without collapsing them, so every row survives with extra columns added. ROW_NUMBER ranks rows and SUM OVER totals across a partition.`,s:`SELECT name, dept, salary,
+       ROW_NUMBER() OVER (PARTITION BY dept
+                          ORDER BY salary DESC) AS rnk,
+       SUM(salary) OVER (PARTITION BY dept) AS dept_payroll
+FROM employees
+ORDER BY dept, rnk;
+`},
+"4-10":{d:`An index is a separate lookup structure that speeds up searches and joins but slows down writes and uses extra storage. Index the columns you filter, join and sort on, and drop indexes you no longer need.`,s:`CREATE INDEX idx_employees_dept
+    ON employees (dept);
+
+CREATE INDEX idx_employees_salary_dept
+    ON employees (salary DESC, dept);
+
+DROP INDEX idx_employees_salary_dept;
+`},
+"4-11":{d:`Constraints are rules the database checks on every insert and update, so invalid data can never be stored. They cover required values, unique values, valid ranges and links to other tables.`,s:`CREATE TABLE departments (
+    id        INTEGER PRIMARY KEY,
+    dept_name VARCHAR(50) NOT NULL UNIQUE,
+    budget    DECIMAL(12,2) CHECK (budget >= 0)
+);
+
+ALTER TABLE employees
+    ADD CONSTRAINT fk_employees_dept
+    FOREIGN KEY (dept) REFERENCES departments (dept_name);
+`},
+"4-12":{d:`A transaction groups several statements so they all succeed or all fail together. COMMIT makes the changes permanent, and ROLLBACK undoes everything done since BEGIN.`,s:`BEGIN;
+
+UPDATE employees SET salary = salary * 1.03
+WHERE dept = 'Sales';
+
+UPDATE departments SET budget = budget - 10000
+WHERE dept_name = 'Sales';
+
+-- Keep both changes
+COMMIT;
+-- Or undo both changes instead
+-- ROLLBACK;
+`},
+"4-13":{d:`A view is a named query the database stores and treats like a table. Views hide complex joins and calculations, and updatable ones write changes through to the base tables.`,s:`CREATE VIEW high_paid AS
+SELECT id, name, dept, salary
+FROM employees
+WHERE salary >= 100000;
+
+CREATE VIEW dept_summary AS
+SELECT dept,
+       COUNT(*) AS headcount,
+       AVG(salary) AS avg_salary
+FROM employees
+GROUP BY dept;
+
+SELECT * FROM dept_summary ORDER BY headcount DESC;
+`},
+"4-14":{d:`A stored procedure is a named block of SQL saved in the database and run by name, optionally with arguments. The exact syntax differs between databases, so check the manual for your system first.`,s:`CREATE PROCEDURE raise_salary (
+    IN p_dept VARCHAR(50),
+    IN p_pct  DECIMAL(5,2)
+)
+BEGIN
+    UPDATE employees
+    SET salary = salary * (1 + p_pct / 100)
+    WHERE dept = p_dept;
+END;
+
+CALL raise_salary('Sales', 5.0);
+`}
+};
+var LANG_JAVA={
+"5-0":{d:`A Java source file holds one public class whose name matches the file name. The main method is where execution begins, and the file compiles to a .class file for the JVM to run.`,s:`public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}`},
+"5-1":{d:`Java is statically typed, so every variable needs a declared type that stays fixed. The primitive types are int, long, double, boolean and char, while String holds text.`,s:`int count = 3;
+long total = 100_000L;
+double price = 19.99;
+boolean active = true;
+char grade = 'A';
+String name = "Ravi";
+final int MAX = 10;
+System.out.println(name + " " + count);`},
+"5-2":{d:`if, else and switch choose between branches, while, do-while and for drive loops. break and continue jump to the next iteration or exit the loop.`,s:`int total = 0;
+for (int i = 1; i <= 5; i++) {
+    if (i == 3) continue;
+    total += i;
+}
+while (total > 8) {
+    total -= 2;
+}
+if (total > 0) {
+    System.out.println("total " + total);
+}`},
+"5-3":{d:`A method lives inside a class and returns a value with the return keyword. Parameters are declared with types, and overloading lets one name accept several signatures.`,s:`static int addAll(int... numbers) {
+    int sum = 0;
+    for (int n : numbers) {
+        sum += n;
+    }
+    return sum;
+}
+
+static String greet(String name) {
+    return "Hi, " + name;
+}`},
+"5-4":{d:`Classes bundle fields and behavior, and constructors set up new objects. Fields can be final so they are assigned once, and this points at the current object.`,s:`class Account {
+    private final String owner;
+    private double balance;
+
+    Account(String owner, double opening) {
+        this.owner = owner;
+        this.balance = opening;
+    }
+    void deposit(double amount) {
+        this.balance += amount;
+    }
+}`},
+"5-5":{d:`A class extends one superclass with extends, while implements adds behaviour from interfaces. Since Java 16 a record is a short way to write an immutable data carrier.`,s:`interface Shape {
+    double area();
+}
+record Rect(double width, double height) implements Shape {
+    public double area() {
+        return width * height;
+    }
+}
+
+class Square extends Rect {
+    Square(double side) { super(side, side); }
+}`},
+"5-6":{d:`The collections framework offers List, Set and Map, and Java 9 made them immutable with List.of or Map.of. var keeps the inferred type out of the way.`,s:`var fruits = List.of("apple", "mango", "kiwi");
+var seen = Set.of("a", "b");
+var scores = Map.of("ravi", 91, "neha", 88);
+
+fruits = fruits.stream().sorted().toList();
+System.out.println(seen.size() + " " + scores);`},
+"5-7":{d:`A stream pipes data through a chain of operations without a loop. map transforms, filter keeps, collect gathers the result, and the pipeline ends with a terminal call.`,s:`var names = List.of("ravi", "neha", "amit");   // needs import java.util.stream.Collectors;
+
+var longNames = names.stream()
+        .filter(n -> n.length() > 3)
+        .map(String::toUpperCase)
+        .sorted()
+        .collect(Collectors.joining(", "));
+
+System.out.println(longNames);`},
+"5-8":{d:`Exceptions signal errors. You catch them with try, catch and finally, and unchecked exceptions extend RuntimeException while checked ones must be declared or caught.`,s:`try {
+    int value = Integer.parseInt("42");
+    System.out.println(value);
+} catch (NumberFormatException e) {
+    System.out.println("bad number: " + e.getMessage());
+} finally {
+    System.out.println("done");
+}`},
+"5-9":{d:`switch can now be used as an expression that yields a value, so arrows replace break. varargs accept many arguments and text blocks hold multi-line strings.`,s:`int day = 6;   // say: 1 = Monday
+String kind = switch (day) {
+    case 6, 7 -> "weekend";
+    default -> "weekday";
+};
+
+String block = """
+        hello
+        world""";
+
+System.out.println(kind + block);`}
+};
+var LANG_SH={
+"6-0":{d:`Bash is the command interpreter that reads what you type, finds the program you named, runs it, and hands back its output and exit status. Commands can be run one at a time interactively or saved together in a script file.`,s:`# Show which shell is running
+echo "$SHELL"
+# Run a command and capture its output
+uname -a
+# A command's exit status is 0 on success
+echo $?
+# Chain commands, running the next one only on success
+mkdir -p demo && cd demo
+pwd`},
+"6-1":{d:`The shell works with files and folders using short commands that take paths as arguments. Most accept options like -l for a long listing and -a to include hidden entries.`,s:`# List the current directory in long form
+ls -la
+# Change into a directory and go back one level
+cd /etc && cd ..
+# Create a directory, then remove an empty one
+mkdir -p work/backup
+rmdir work/backup
+# Copy a file, then delete the copy
+cp notes.txt notes.bak
+rm notes.bak`},
+"6-2":{d:`Every file has an owner, a group, and permission bits for its owner, group and others. The octal form gives three digits, one per group, where 7 means read, write and execute.`,s:`# Show permissions in octal, symbolic, plus owner and group
+stat -c "%a %A %U %G" notes.txt
+# Owner gets everything, group reads, others get nothing
+chmod 750 notes.txt
+# Add execute for the group only
+chmod g+x notes.txt
+# Change the owning user and group
+sudo chown "$USER":devs notes.txt
+# Set the setuid bit, then clear it again
+chmod u+s notes.txt
+chmod u-s notes.txt`},
+"6-3":{d:`Redirection connects standard input, standard output and standard error to files or to other commands. The symbols overwrite, append, join and divert a stream instead of printing it.`,s:`# > overwrites a file with stdout
+echo "first run" > log.txt
+# >> appends a line to the end of the file
+echo "second run" >> log.txt
+# | sends stdout of one command into stdin of the next
+grep -c . log.txt | wc -l
+# 2> redirects stderr into a file, leaving stdout alone
+ls missing.txt 2> errors.txt
+# &> merges both streams into one file
+ls -l . &> all.txt
+# Order matters: 2>&1 copies stderr into stdout's target
+cat log.txt 2>&1 > merged.txt`},
+"6-4":{d:`grep searches text by pattern, sed edits lines with a script, and awk reads columns of structured data. Together they cover most quick text filtering tasks on the command line.`,s:`# grep: print matching lines, with line numbers, ignoring case
+grep -in "error" server.log
+# sed: replace every match, writing the result to a new file
+sed "s/http:/https:/g" urls.txt > secure.txt
+# sed: delete blank lines and keep only the first five results
+sed "/^$/d" server.log | head -n 5
+# awk: print the first column of each line
+awk "{print \\$1}" access.log
+# awk: add the total of column two to the end of the output
+awk "{sum += \\$2} END {print sum}" values.txt`},
+"6-5":{d:`Shell variables hold strings, and positional parameters hold the arguments passed to a script or function. Special variables such as $1, $# and $0 expose arguments directly.`,s:`# Assign, then read a variable back
+NAME="service-api"
+echo "value is $NAME"
+# Export it so child processes inherit it
+export LOG_LEVEL="debug"
+# Positional arguments of the running script
+echo "count: $#"
+echo "first: $1"
+echo "script: $0"
+echo "region: $REGION"
+# Expansion plus a substitution inside one command
+echo "path entries: $(echo $PATH | tr ":" "\\n" | wc -l)"`},
+"6-6":{d:`if, elif and else branch on the exit status of a command, and test compares strings, numbers and file existence. The condition is normally written between square brackets or as the test command.`,s:`# Exit status alone decides the branch
+if grep -q "error" app.log; then
+  echo "errors found"
+else
+  echo "log is clean"
+fi
+# Comparisons on numbers and strings can be combined
+if [ "$COUNT" -gt 10 ] && [ "$MODE" = "fast" ]; then
+  echo "large and fast"
+fi
+# elif chains, ending in else
+if [ -f config.json ]; then echo "config present"; elif [ -z "$CONFIG" ]; then echo "no config set"; else echo "using environment config"; fi`},
+"6-7":{d:`A for loop walks over a list of words or over a range of numbers, while while repeats as long as its condition succeeds. break leaves the loop and continue skips to the next iteration.`,s:`# for: iterate over explicit words
+for NAME in alpha beta gamma; do
+  echo "item: $NAME"
+done
+# for: walk a range, stopping early with break
+for N in 1 2 3 4; do
+  [ "$N" -eq 4 ] && break
+  echo "before $N"
+done
+# while: read a file line by line, skipping empty lines
+while read -r LINE; do [ -n "$LINE" ] && echo "got: $LINE"; done < hosts.txt`},
+"6-8":{d:`A function is a named block of commands that runs in the current shell, so it can change variables the caller sees. It takes positional arguments and returns a status from its last command.`,s:`# Define a helper, then call it with a path
+count_lines() {
+  wc -l < "$1"
+}
+count_lines server.log
+# A status-returning helper used in a condition
+is_ready() {
+  [ -f "$1" ]
+}
+if is_ready app.pid; then echo "ready"; else echo "not ready"; fi
+greet() { local WHO="$1"; echo "hello, $WHO"; }   # local keeps it private
+greet "operator"`},
+"6-9":{d:`Every running program is a process with its own ID, and the shell can start jobs in the background, list them, signal them and wait for them. Signals control how a process is asked to stop.`,s:`# Run a long job in the background, then list jobs
+sleep 60 &
+jobs -l
+# Inspect running processes
+ps -ef | grep "server"
+# Ask a process to terminate, then force it
+pkill -TERM server
+pkill -KILL server
+# Wait for the background job and read its status
+wait; echo "exit status: $?"
+# Measure how long a command takes
+time sleep 1`},
+"6-10":{d:`A script is a plain text file holding shell commands, and its first line should be a shebang naming the interpreter. Making the file executable lets it run directly by name.`,s:`# Write a runnable script with a shebang
+printf "%s\\n" \\
+"#!/usr/bin/env bash" \\
+"set -euo pipefail" \\
+"cd /var/www" \\
+"tar -czf backup.tgz data/" > deploy.sh
+# Inspect what you wrote
+cat -n deploy.sh
+# Make it executable and run it
+chmod +x deploy.sh
+./deploy.sh`},
+"6-11":{d:`A few command line staples save time in daily work: finding files by name, counting things, watching a log grow, and turning a file list into a batch of commands.`,s:`# Find every file by name, searching from here
+find . -type f -name "*.log"
+# Count lines, then find the most frequent requests
+wc -l server.log
+awk "{print \\$1}" access.log | sort | uniq -c | sort -rn | head
+# Follow a log as it grows
+tail -f app.log
+# Find the biggest directories on disk
+du -sh * | sort -h
+# Null-separated records keep xargs safe on odd names
+printf "%s\\0" *.txt | xargs -0 wc -l`}
+};
+
+
+/* ================= Language syntax reference ================= */
+var LANGDATA=Object.assign({},LANG_C,LANG_CPP,LANG_PY,LANG_JS,LANG_SQL,LANG_JAVA,LANG_SH);
+var LLEARNED={};try{LLEARNED=JSON.parse(localStorage.getItem("jmr-langs")||"{}")}catch(e){}
+const lsave=()=>{try{localStorage.setItem("jmr-langs",JSON.stringify(LLEARNED))}catch(e){}};
+const LANGTOPICS=[
+["Program structure","Comments and variables","Input/output","Operators and type conversion","if/else and switch","Loops","Functions","Arrays and strings","Pointers","Structures","Dynamic memory: malloc and free","File handling"],
+["Program structure","Variables, types and const","Input/output","Strings with std::string","if/else and switch","Loops and range-based for","Functions, default arguments and references","Vectors","Maps and sets","Classes","Inheritance and polymorphism","Operator overloading","Function templates","Smart pointers","STL algorithms"],
+["Comments and variables","Input/output","Operators and type conversion","if/elif/else","Loops","Strings","Lists","Tuples and sets","Dictionaries","Functions","List and dict comprehensions","Classes and objects","Exceptions","Modules and packages","Type hints and f-strings"],
+["Comments and variables","Console input and output","Operators and type conversion","if/else and switch","Loops","Functions","Arrow functions","Template literals","Arrays","Objects","Destructuring, spread and rest","Array methods: map, filter and reduce","Classes","Promises and async/await","Working with the DOM","JSON"],
+["Comments and running a query","SELECT and WHERE","ORDER BY and LIMIT","Aggregate functions: COUNT, SUM, AVG","GROUP BY and HAVING","INSERT, UPDATE and DELETE","Joins: INNER, LEFT and CROSS","Subqueries","Common table expressions with WITH","Window functions","Indexes","Constraints","Transactions","Views","Stored procedures basics"],
+["Program structure","Variables and types","Control flow and loops","Methods","Classes and constructors","Inheritance, interfaces and records","Collections in one line","Streams in one line","Exceptions","switch expressions, varargs and text blocks"],
+["Running commands and the shell","Files and directories","Permissions","Pipes and redirection","Text tools: grep, sed and awk","Variables and arguments","Conditionals","Loops","Functions","Process management","Writing a script and the shebang","Useful one-liners"]];
+const LANGNAME=["C","C++","Python","JavaScript","SQL","Java","Bash"];
+const CMP=[
+["Hello world",
+`#include <stdio.h>
+int main(void) {
+  printf("Hello, world!\\n");
+  return 0;
+}`,
+`#include <iostream>
+int main() {
+  std::cout << "Hello, world!\\n";
+  return 0;
+}`,
+`print("Hello, world!")`],
+["Declare a variable",
+`int age = 21;
+double gpa = 8.5;
+char grade = 'A';`,
+`int age = 21;
+const double gpa = 8.5;
+std::string name = "Asha";`,
+`age = 21
+gpa = 8.5
+name = "Asha"   # no type keyword`],
+["if / else",
+`if (age >= 18) {
+  printf("Adult\\n");
+} else {
+  printf("Minor\\n");
+}`,
+`if (age >= 18) {
+  std::cout << "Adult\\n";
+} else {
+  std::cout << "Minor\\n";
+}`,
+`if age >= 18:
+    print("Adult")
+else:
+    print("Minor")`],
+["Loop over a range",
+`for (int i = 0; i < 5; i++) {
+  printf("%d\\n", i);
+}`,
+`for (int i = 0; i < 5; i++) {
+  std::cout << i << '\\n';
+}`,
+`for i in range(5):
+    print(i)`],
+["Write a function",
+`int square(int n) {
+  return n * n;
+}
+// call: square(7)`,
+`int square(int n) { return n * n; }
+void addTo(std::vector<int>& v, int x) { v.push_back(x); }`,
+`def square(n):
+    return n * n`],
+["Dynamic array / list",
+`int n = 5;
+int* arr = malloc(n * sizeof(int));
+arr[0] = 10;
+free(arr);`,
+`#include <vector>
+std::vector<int> v{10, 20, 30};
+v.push_back(40);`,
+`nums = [10, 20, 30]
+nums.append(40)`],
+["Map / dictionary",
+`// C has no built-in map
+typedef struct { int key; char* name; } Entry;`,
+`#include <map>
+std::map<std::string, int> ages{{"Asha", 21}};
+ages["Bob"] = 22;`,
+`ages = {"Asha": 21}
+ages["Bob"] = 22`],
+["Custom type / object",
+`typedef struct {
+  char name[50];
+  int age;
+} Person;
+Person p = {"Asha", 21};`,
+`struct Person {
+  std::string name;
+  int age;
+};
+Person p{"Asha", 21};`,
+`class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age`],
+["Free memory",
+`int* p = malloc(sizeof(int));
+*p = 5;
+free(p);   // required, no GC`,
+`auto p = std::make_unique<int>(5);
+// freed automatically`,
+`# nothing to free; refcounting + GC
+x = [1, 2, 3]`],
+["Build and run",
+`gcc main.c -o main
+./main`,
+`g++ main.cpp -std=c++17 -o main
+./main`,
+`python main.py`]];
+
+const CMPJS=[
+`console.log("Hello, world!");`,
+`let age = 21;
+const name = "Asha";`,
+`if (age >= 18) {
+  console.log("Adult");
+} else {
+  console.log("Minor");
+}`,
+`for (let i = 0; i < 5; i++) {
+  console.log(i);
+}`,
+`function square(n) {
+  return n * n;
+}
+// or: const square = (n) => n * n;`,
+`const nums = [10, 20, 30];
+nums.push(40);`,
+`const ages = { Asha: 21 };
+ages["Bob"] = 22;`,
+`class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+}
+const p = new Person("Asha", 21);`,
+`// nothing to free; the GC handles it
+let x = [1, 2, 3];`,
+`node main.js`];
+
+(function(){
+  const cmp=$("cmp");
+  cmp.innerHTML="<thead><tr><th>Task</th><th>C</th><th>C++</th><th>Python</th><th>JavaScript</th></tr></thead><tbody>"+
+    CMP.map((r,i)=>"<tr><td>"+esc(r[0])+"</td>"+[r[1],r[2],r[3],CMPJS[i]].map(c=>"<td><pre>"+esc(c)+"</pre></td>").join("")+"</tr>").join("")+"</tbody>";
+})();
+
+let li=0,lq="",lcol=new Set();
+function lrender(){const q=lq.trim().toLowerCase();
+const all=LANGTOPICS[li].map((t,j)=>({t,j,id:li+"-"+j}));let n=0;
+$("lsw").innerHTML=all.filter(o=>!q||o.t.toLowerCase().includes(q)||(LANGDATA[o.id]&&LANGDATA[o.id].d.toLowerCase().includes(q))).map(lsec0).join("");
+$("lno").hidden=!!n;
+const tot=LANGTOPICS.flatMap((t,a)=>t.map((x,b)=>a+"-"+b));
+const d=tot.filter(k=>LLEARNED[k]).length,p=tot.length?Math.round(d/tot.length*100):0;
+$("lpp").textContent=p+"%";$("lpb").style.width=p+"%";$("lcn").innerHTML=`<small>&middot; ${d} of ${tot.length} syntax topics</small>`}
+function lsec0(o){const d=LANGDATA[o.id],on=!!LLEARNED[o.id];
+return `<section class="ps lsec${on?" learned":""}${lcol.has(o.id)?" col":""}" data-id="${o.id}">`+
+`<div class="lh" role="button" tabindex="0"><h2><span class="car">&#9662;</span> ${esc(o.t)}</h2>`+
+`<button class="lb${on?" on":""}" type="button" data-lb="${o.id}" aria-pressed="${on}" aria-label="Mark ${esc(o.t)} as learned">&#10003;</button></div>`+
+`<div class="lbody"><p>${esc(d?d.d:"")}</p>`+
+`<div class="pw"><button class="cb" type="button" data-cp="L${o.id}" aria-label="Copy code to clipboard">Copy</button>`+
+`<pre id="L${o.id}">${esc(d?d.s:"")}</pre></div></div></section>`}
+$("lsw").addEventListener("click",e=>{const b=e.target.closest("[data-lb]");
+if(b){const id=b.dataset.lb;LLEARNED[id]?delete LLEARNED[id]:LLEARNED[id]=1;lsave();lrender();
+const now=document.querySelector('[data-lb="'+id+'"]');
+toast(now&&now.classList.contains("on")?"Marked as learned":"Cleared",!!(now&&now.classList.contains("on")));return}
+const h=e.target.closest(".lh");if(h){const id=h.parentElement.dataset.id;lcol.has(id)?lcol.delete(id):lcol.add(id);h.parentElement.classList.toggle("col")}});
+$("lch").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;li=+b.dataset.l;
+[...$("lch").children].forEach(x=>x.classList.toggle("on",x===b));lrender()});
+$("lq").oninput=e=>{lq=e.target.value;lrender()};
+$("clrL").onclick=()=>{$("lq").value="";lq="";lrender()};
+const llabel=()=>{const anyOpen=[...$("lsw").querySelectorAll(".lsec")].some(s=>!s.classList.contains("col"));
+$("lexp").textContent=anyOpen?"Collapse all":"Expand all";return anyOpen};
+$("lexp").onclick=()=>{const anyOpen=llabel();
+[...$("lsw").querySelectorAll(".lsec")].forEach(s=>s.classList.toggle("col",anyOpen));
+[...$("lsw").querySelectorAll(".lsec")].forEach(s=>anyOpen?lcol.add(s.dataset.id):lcol.delete(s.dataset.id));
+llabel()};
+$("cmpWrap").addEventListener("click",e=>{if(e.target.closest(".lh"))e.currentTarget.classList.toggle("col")});
+$("lrs").onclick=()=>{if(confirm("Reset all learned syntax topics?")){LLEARNED={};lsave();lrender()}};
+$("vl").onclick=()=>view("l");
+lrender();llabel();
 
 /* ================= UI / UX layer ================= */
 const toastBox=$("toasts");
@@ -6478,10 +7719,11 @@ if(e.key==="Escape"){const q=$("viewP").hidden?$("q"):$("pq");
 if(q.value){q.value="";q.dispatchEvent(new Event("input"))}return}
 if(isTyping(e)||e.ctrlKey||e.metaKey||e.altKey)return;
 if(document.querySelector("dialog[open]"))return;
-if(e.key==="/"){e.preventDefault();($("viewP").hidden?$("q"):$("pq")).focus()}
+if(e.key==="/"){e.preventDefault();(!$("viewP").hidden?$("pq"):!$("viewL").hidden?$("lq"):$("q")).focus()}
 else if(e.key==="1")view("r");
 else if(e.key==="2")view("p");
-else if(e.key==="?")toast("/ search  ·  1 roadmap  ·  2 problems  ·  Esc clear  ·  ↑↓ browse");
+else if(e.key==="3")view("l");
+else if(e.key==="?")toast("/ search  ·  1 roadmap  ·  2 problems  ·  3 languages  ·  Esc clear");
 else if(e.key==="Enter"&&e.target.id==="vr")cont();
 });
 
@@ -6490,7 +7732,7 @@ const PKEY="jmr-prefs";let prefs={};
 try{prefs=JSON.parse(localStorage.getItem(PKEY)||"{}")}catch(e){}
 const savePrefs=()=>{try{localStorage.setItem(PKEY,JSON.stringify(prefs))}catch(e){}};
 
-const syncNav=()=>{$("np").textContent=$("viewP").hidden?$("op").textContent:$("pp").textContent};
+const syncNav=()=>{$("np").textContent=$("viewP").hidden?($("viewL").hidden?$("op").textContent:$("lpp").textContent):$("pp").textContent};
 const _view=view;view=function(v){_view(v);prefs.v=v;savePrefs();syncNav()};
 const _pupd=pupd;pupd=function(){_pupd();syncNav()};
 const _upd=upd;upd=function(){_upd();syncNav()};
@@ -6503,7 +7745,7 @@ if(prefs.sh){pshown=true;$("psh").classList.add("on")}
 $("pt").addEventListener("change",e=>{prefs.t=e.target.value;savePrefs()});
 $("pch").addEventListener("click",e=>{const b=e.target.closest("button");if(b){prefs.d=b.dataset.d;savePrefs()}});
 $("psh").addEventListener("click",()=>{prefs.sh=pshown;savePrefs()});
-view(prefs.v==="p"?"p":"r");
+view(prefs.v==="p"||prefs.v==="l"?prefs.v:"r");
 
 /* next unsolved problem */
 $("pctn").onclick=()=>{const target=PROB.findIndex((p,i)=>!PSOLVED[i]);

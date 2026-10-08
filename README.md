@@ -5,7 +5,9 @@ browser — no build step, no dependencies, no internet required.
 
 ## What is inside
 
-**Roadmap — 12 levels, 152 topics.** Every topic card opens a detail view with:
+The page has three tabs.
+
+### Roadmap — 12 levels, 152 topics Every topic card opens a detail view with:
 
 - a plain-language explanation of the concept
 - a short, runnable code example
@@ -33,6 +35,18 @@ link to search the problem on LeetCode. Search, difficulty filter, topic filter,
 "Solved at top" toggle are all available. Solved problems are saved separately from
 roadmap progress, so the two never interfere.
 
+### Languages — 95 syntax topics across 7 languages
+
+A syntax reference you can scan and copy from, covering **C (12 topics), C++ (15),
+Python (15), JavaScript (16), SQL (15), Java (10) and Bash (12)**. Each topic shows a
+one-line explanation and a runnable example. There is also a side-by-side cheat sheet
+that shows the same ten tasks — hello world, declaring a variable, conditionals, loops,
+functions, dynamic arrays, maps, custom types, freeing memory, and how to build and run
+— written in C, C++, Python and JavaScript.
+
+The C, C++, Python, JavaScript and Bash examples were compiled and executed while being
+written; the SQL examples follow one consistent `employees` / `departments` schema.
+
 ## Using it
 
 Just open `index.html`. To serve it locally instead:
@@ -44,13 +58,20 @@ python -m http.server 8000
 
 ## Features
 
+- Three tabs: Roadmap, Problems and Languages, switched with `1`, `2` and `3`
 - Dark and light theme, remembered for the session
-- Search and difficulty filters on both views
-- "Continue" jumps to your first incomplete topic
-- Per-level and per-topic collapse
-- Progress bars at the roadmap level, the topic level, and per problem section
-- Responsive layout, works on a phone
-- Respects `prefers-reduced-motion`
+- Search and difficulty filters on every tab
+- "Continue" jumps to your first incomplete topic; "Next unsolved" does the same
+  for the problem bank
+- copy-to-clipboard on every code block
+- toast notifications for every completion
+- back-to-top floating button once you scroll past the hero
+- progress bars at the roadmap level, the topic level, per problem section and per
+  language
+- per-level, per-topic and per-language collapse
+- progress, filters and the active tab persist across reloads
+- responsive layout, works on a phone
+- respects `prefers-reduced-motion`
 
 ## Notes
 
