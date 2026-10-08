@@ -35,14 +35,23 @@ link to search the problem on LeetCode. Search, difficulty filter, topic filter,
 "Solved at top" toggle are all available. Solved problems are saved separately from
 roadmap progress, so the two never interfere.
 
-### Languages — 95 syntax topics across 7 languages
+### Languages — 101 syntax topics across 7 languages
 
-A syntax reference you can scan and copy from, covering **C (12 topics), C++ (15),
-Python (15), JavaScript (16), SQL (15), Java (10) and Bash (12)**. Each topic shows a
-one-line explanation and a runnable example. There is also a side-by-side cheat sheet
-that shows the same ten tasks — hello world, declaring a variable, conditionals, loops,
-functions, dynamic arrays, maps, custom types, freeing memory, and how to build and run
-— written in C, C++, Python and JavaScript.
+A syntax reference you can scan and copy from, covering **C (13 topics), C++ (16),
+Python (16), JavaScript (17), SQL (15), Java (11) and Bash (13)**. Each topic shows a
+one-line explanation and a runnable example.
+
+Two cross-language cheat sheets sit at the top of the tab:
+
+- **Same task in C, C++, Python and JavaScript** — hello world, declaring a variable,
+  conditionals, loops, functions, dynamic arrays, maps, custom types, freeing memory,
+  and how to build and run.
+- **Includes and imports across languages** — how each of the six languages pulls in a
+  standard library, one of your own files, a whole namespace, a single renamed item,
+  and where on disk it searches for them.
+
+Each language also has its own imports topic (`#include` for C and C++, `import` for
+Python, JavaScript and Java, `source` for Bash).
 
 The C, C++, Python, JavaScript and Bash examples were compiled and executed while being
 written; the SQL examples follow one consistent `employees` / `departments` schema.

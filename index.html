@@ -152,6 +152,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <section id="viewL" hidden>
 <div class="ov"><div class="row"><span>Syntax topics learned <small id="lcn"></small></span><b id="lpp">0%</b></div><div class="bar"><i id="lpb"></i></div><button class="rst" id="lrs">Reset learned</button></div>
 <section class="ps" id="cmpWrap"><div class="lh" role="button" tabindex="0"><h2><span class="car">&#9662;</span> Same task in C, C++, Python and JavaScript</h2><span>cheat sheet</span></div><div class="cmpw"><table class="cmp" id="cmp"></table></div></section>
+<section class="ps" id="impWrap"><div class="lh" role="button" tabindex="0"><h2><span class="car">&#9662;</span> Includes and imports across languages</h2><span>how each language pulls in other code</span></div><div class="cmpw"><table class="cmp" id="impt"></table></div></section>
 <div class="tb"><div class="ch" id="lch"><button class="on" data-l="0">C</button><button data-l="1">C++</button><button data-l="2">Python</button><button data-l="3">JavaScript</button><button data-l="4">SQL</button><button data-l="5">Java</button><button data-l="6">Bash</button></div><input id="lq" type="search" placeholder="Search syntax topics&hellip;" aria-label="Search syntax topics"><button class="ic" id="lexp">Expand all</button></div>
 <p id="lno" hidden style="color:var(--muted)">No syntax topics match your search.<button class="clr" id="clrL" type="button">Clear search</button></p>
 <div id="lsw"></div>
@@ -6600,6 +6601,13 @@ int main(void) {
     while (fgets(buf, sizeof buf, fp) != NULL) printf("%s", buf);
     fclose(fp);
     return 0;
+}`},
+"0-12":{d:`C pulls declarations in from header files: angle brackets search the system include path, quotes look next to the current file first.`,s:`#include <stdio.h>   // system header
+#include "utils.h"    // your own header, found relative to this file
+
+int main(void) {
+  printf("hello\\n");
+  return 0;
 }`}
 };
 var LANG_CPP={
@@ -6800,6 +6808,14 @@ int main() {
     std::cout << "Found 8: " << (it != nums.end()) << '\\n';
     std::cout << "Sum: " << std::accumulate(nums.begin(), nums.end(), 0) << '\\n';
     return 0;
+}`},
+"1-15":{d:`C++ uses the same include mechanism as C, plus using declarations that shorten a name instead of importing it.`,s:`#include <iostream>   // standard library
+#include "Shape.hpp"   // your own header
+using std::cout;
+
+int main() {
+  cout << "hello\\n";
+  return 0;
 }`}
 };
 var LANG_PY={
@@ -6956,7 +6972,13 @@ def find(name: str) -> Optional[str]:
 
 total: float = average([1.0, 2.0, 4.0])
 print(f"mean = {total:.3f}")
-print(find("ada"), find(""))`}
+print(find("ada"), find(""))`},
+"2-15":{d:`Python imports modules by name; from x import y pulls a single item, and pip-installed packages are imported exactly like built-in ones.`,s:`import os
+from collections import Counter
+import numpy as np
+from utils.helpers import parse
+
+print(os.name, Counter("aab").most_common(1), np.array([1, 2]))`}
 };
 var LANG_JS={
 "3-0":{d:`A line comment starts with two slashes, and a block comment is wrapped in slash-star and star-slash. Variables are declared with let or const, since var is legacy and should be avoided.`,s:`// A single line comment
@@ -7118,7 +7140,14 @@ try {
   JSON.parse("{ bad json }");
 } catch (err) {
   console.log("parse error:", err.message);
-}`}
+}`},
+"3-16":{d:`JavaScript uses ES module syntax: named imports pick specific exports, and the path always carries the file extension.`,s:`import fs from "node:fs";
+import { helper } from "./utils.js";
+
+export function add(a, b) {
+  return a + b;
+}
+console.log(typeof fs, typeof helper);`}
 };
 var LANG_SQL={
 "4-0":{d:`A comment begins with two dashes and runs to the end of the line, and any SQL client can run a statement directly from a script or console. Use comments to label the sections of a longer script.`,s:`-- Fetch a single employee by primary key
@@ -7358,7 +7387,13 @@ String block = """
         hello
         world""";
 
-System.out.println(kind + block);`}
+System.out.println(kind + block);`},
+"5-10":{d:`Java names every import explicitly or with a wildcard, and static imports pull in a single member of a class.`,s:`import java.util.ArrayList;
+import java.util.*;
+import static java.lang.Math.max;
+
+List<Integer> nums = new ArrayList<>(List.of(1, max(2, 5)));
+System.out.println(nums);`}
 };
 var LANG_SH={
 "6-0":{d:`Bash is the command interpreter that reads what you type, finds the program you named, runs it, and hands back its output and exit status. Commands can be run one at a time interactively or saved together in a script file.`,s:`# Show which shell is running
@@ -7493,7 +7528,14 @@ tail -f app.log
 # Find the biggest directories on disk
 du -sh * | sort -h
 # Null-separated records keep xargs safe on odd names
-printf "%s\\0" *.txt | xargs -0 wc -l`}
+printf "%s\\0" *.txt | xargs -0 wc -l`},
+"6-12":{d:`Bash has no import keyword: source runs another script inside the current shell, so its variables and functions stay available.`,s:`source ./lib.sh
+. ./config.env
+
+export APP_ENV="dev"
+
+hello() { echo "from a sourced script"; }
+hello`}
 };
 
 
@@ -7502,13 +7544,13 @@ var LANGDATA=Object.assign({},LANG_C,LANG_CPP,LANG_PY,LANG_JS,LANG_SQL,LANG_JAVA
 var LLEARNED={};try{LLEARNED=JSON.parse(localStorage.getItem("jmr-langs")||"{}")}catch(e){}
 const lsave=()=>{try{localStorage.setItem("jmr-langs",JSON.stringify(LLEARNED))}catch(e){}};
 const LANGTOPICS=[
-["Program structure","Comments and variables","Input/output","Operators and type conversion","if/else and switch","Loops","Functions","Arrays and strings","Pointers","Structures","Dynamic memory: malloc and free","File handling"],
-["Program structure","Variables, types and const","Input/output","Strings with std::string","if/else and switch","Loops and range-based for","Functions, default arguments and references","Vectors","Maps and sets","Classes","Inheritance and polymorphism","Operator overloading","Function templates","Smart pointers","STL algorithms"],
-["Comments and variables","Input/output","Operators and type conversion","if/elif/else","Loops","Strings","Lists","Tuples and sets","Dictionaries","Functions","List and dict comprehensions","Classes and objects","Exceptions","Modules and packages","Type hints and f-strings"],
-["Comments and variables","Console input and output","Operators and type conversion","if/else and switch","Loops","Functions","Arrow functions","Template literals","Arrays","Objects","Destructuring, spread and rest","Array methods: map, filter and reduce","Classes","Promises and async/await","Working with the DOM","JSON"],
+["Program structure","Comments and variables","Input/output","Operators and type conversion","if/else and switch","Loops","Functions","Arrays and strings","Pointers","Structures","Dynamic memory: malloc and free","File handling","Includes"],
+["Program structure","Variables, types and const","Input/output","Strings with std::string","if/else and switch","Loops and range-based for","Functions, default arguments and references","Vectors","Maps and sets","Classes","Inheritance and polymorphism","Operator overloading","Function templates","Smart pointers","STL algorithms","Includes and using declarations"],
+["Comments and variables","Input/output","Operators and type conversion","if/elif/else","Loops","Strings","Lists","Tuples and sets","Dictionaries","Functions","List and dict comprehensions","Classes and objects","Exceptions","Modules and packages","Type hints and f-strings","Imports"],
+["Comments and variables","Console input and output","Operators and type conversion","if/else and switch","Loops","Functions","Arrow functions","Template literals","Arrays","Objects","Destructuring, spread and rest","Array methods: map, filter and reduce","Classes","Promises and async/await","Working with the DOM","JSON","Imports and exports"],
 ["Comments and running a query","SELECT and WHERE","ORDER BY and LIMIT","Aggregate functions: COUNT, SUM, AVG","GROUP BY and HAVING","INSERT, UPDATE and DELETE","Joins: INNER, LEFT and CROSS","Subqueries","Common table expressions with WITH","Window functions","Indexes","Constraints","Transactions","Views","Stored procedures basics"],
-["Program structure","Variables and types","Control flow and loops","Methods","Classes and constructors","Inheritance, interfaces and records","Collections in one line","Streams in one line","Exceptions","switch expressions, varargs and text blocks"],
-["Running commands and the shell","Files and directories","Permissions","Pipes and redirection","Text tools: grep, sed and awk","Variables and arguments","Conditionals","Loops","Functions","Process management","Writing a script and the shebang","Useful one-liners"]];
+["Program structure","Variables and types","Control flow and loops","Methods","Classes and constructors","Inheritance, interfaces and records","Collections in one line","Streams in one line","Exceptions","switch expressions, varargs and text blocks","Imports"],
+["Running commands and the shell","Files and directories","Permissions","Pipes and redirection","Text tools: grep, sed and awk","Variables and arguments","Conditionals","Loops","Functions","Process management","Writing a script and the shebang","Useful one-liners","Sourcing other scripts"]];
 const LANGNAME=["C","C++","Python","JavaScript","SQL","Java","Bash"];
 const CMP=[
 ["Hello world",
@@ -7651,6 +7693,49 @@ let x = [1, 2, 3];`,
     CMP.map((r,i)=>"<tr><td>"+esc(r[0])+"</td>"+[r[1],r[2],r[3],CMPJS[i]].map(c=>"<td><pre>"+esc(c)+"</pre></td>").join("")+"</tr>").join("")+"</tbody>";
 })();
 
+const IMP=[
+["Standard library",
+`import java.util.ArrayList;`,
+`#include <stdio.h>`,
+`#include <iostream>`,
+`import os`,
+`import fs from "node:fs";`,
+`source /etc/profile`],
+["Your own file",
+`import com.acme.Utils;`,
+`#include "utils.h"`,
+`#include "Shape.hpp"`,
+`from utils import parse`,
+`import { parse } from "./utils.js";`,
+`source ./lib.sh`],
+["Everything in a namespace",
+`import java.util.*;`,
+`// C has no wildcard include`,
+`#include <bits/stdc++.h>  // non-standard`,
+`from os import *`,
+`import * as fs from "node:fs";`,
+`# source every script you need`],
+["One item under another name",
+`import static java.lang.Math.max;`,
+`#define MAX(a, b) ((a) > (b) ? (a) : (b))`,
+`using std::vector;`,
+`import numpy as np`,
+`import { readFile as read } from "node:fs";`,
+`alias ll="ls -la"`],
+["Where it looks for it",
+`classpath: -cp target/classes`,
+`include path: -I include`,
+`include path: -I include`,
+`sys.path, plus site-packages via pip`,
+`node_modules, plus the relative path`,
+`$PATH, plus files in ~/.bashrc`]];
+
+(function(){
+  const t=$("impt");
+  t.innerHTML="<thead><tr><th>Task</th><th>Java</th><th>C</th><th>C++</th><th>Python</th><th>JavaScript</th><th>Bash</th></tr></thead><tbody>"+
+    IMP.map(r=>"<tr><td>"+esc(r[0])+"</td>"+r.slice(1).map(c=>"<td><pre>"+esc(c)+"</pre></td>").join("")+"</tr>").join("")+"</tbody>";
+})();
+
 let li=0,lq="",lcol=new Set();
 function lrender(){const q=lq.trim().toLowerCase();
 const all=LANGTOPICS[li].map((t,j)=>({t,j,id:li+"-"+j}));let n=0;
@@ -7682,6 +7767,7 @@ $("lexp").onclick=()=>{const anyOpen=llabel();
 [...$("lsw").querySelectorAll(".lsec")].forEach(s=>anyOpen?lcol.add(s.dataset.id):lcol.delete(s.dataset.id));
 llabel()};
 $("cmpWrap").addEventListener("click",e=>{if(e.target.closest(".lh"))e.currentTarget.classList.toggle("col")});
+$("impWrap").addEventListener("click",e=>{if(e.target.closest(".lh"))e.currentTarget.classList.toggle("col")});
 $("lrs").onclick=()=>{if(confirm("Reset all learned syntax topics?")){LLEARNED={};lsave();lrender()}};
 $("vl").onclick=()=>view("l");
 lrender();llabel();
