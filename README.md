@@ -1,20 +1,24 @@
-# Java Mastery Roadmap
+# Programming Roadmaps and Problem Bank
 
-A single-file, offline Java learning roadmap and problem bank. Open `index.html` in any
-browser — no build step, no dependencies, no internet required.
+A single-file, offline learning page: roadmaps for Java, C++ and Python, a
+topic-grouped problem bank, and a syntax reference for seven languages. Open
+`index.html` in any browser — no build step, no dependencies, no internet required.
 
 ## What is inside
 
 The page has three tabs.
 
-### Roadmap — 12 levels, 152 topics Every topic card opens a detail view with:
+### Roadmap — Java, C++ and Python
+
+Switch language with the selector at the top of the tab. Each roadmap is 12 levels
+and every topic card opens a detail view with:
 
 - a plain-language explanation of the concept
 - a short, runnable code example
 - a practice problem
 - the full solution
 
-Progress is tracked per topic and saved in your browser's `localStorage`.
+**Java — 152 topics**
 
 | # | Level | # | Level |
 |---|---|---|---|
@@ -24,6 +28,20 @@ Progress is tracked per topic and saved in your browser's `localStorage`.
 | 4 | Collections Framework | 10 | DSA with Java |
 | 5 | Advanced Core Java | 11 | Spring & Spring Boot |
 | 6 | Functional Programming | 12 | Backend Development |
+
+**C++ — 113 topics:** Foundations, Functions and Scope, Classes and Objects,
+Inheritance and Polymorphism, Pointers and Memory, STL Containers, STL Algorithms and
+Iterators, Strings/Streams/Files, Exceptions, Templates and Generic Code, Concurrency,
+Modern C++.
+
+**Python — 113 topics:** Foundations, Built-in Data Structures, Functions, Modules and
+Packages, OOP, Errors and Exceptions, Files/Paths/Data, Standard Library Tour,
+Functional Techniques, Data Structures from Scratch, Algorithms and Complexity,
+Concurrency and Async.
+
+Progress is tracked per topic, saved separately per language in `localStorage`
+(`jmr-progress`, `jmr-progress-cpp`, `jmr-progress-py`), so the three roadmaps never
+interfere.
 
 **Problems — 164 LeetCode-style problems, grouped by topic.** 23 topic sections
 (Arrays, Two Pointers, Hashing, String, Linked List, Stack, Queue, Heap, Tree, BST,
@@ -68,6 +86,7 @@ python -m http.server 8000
 ## Features
 
 - Three tabs: Roadmap, Problems and Languages, switched with `1`, `2` and `3`
+- Three roadmaps in the first tab: Java, C++ and Python, each with independent progress
 - Dark and light theme, remembered for the session
 - Search and difficulty filters on every tab
 - "Continue" jumps to your first incomplete topic; "Next unsolved" does the same

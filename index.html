@@ -57,6 +57,10 @@ main{max-width:1000px;margin:0 auto;padding:30px 5vw 60px}
 .lh{cursor:pointer;user-select:none}.car{display:inline-block;transition:transform .25s;color:var(--acc)}
 .lv.col .car{transform:rotate(-90deg)}.tl:not(.flt) .lv.col .grid{display:none}
 .vt{display:flex;gap:8px;margin:0 0 24px;flex-wrap:wrap}
+.lt{display:flex;gap:8px;align-items:center;margin:0 0 22px;flex-wrap:wrap}
+.lt .lbl{color:var(--muted);font-size:.85rem;margin-right:2px}
+.lt button{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:7px 16px;border-radius:10px;font-weight:600;font-size:.9rem}
+.lt button.on{background:var(--grad);color:#fff;border-color:transparent}
 .vt button{background:var(--bg2);border:1px solid var(--line);color:var(--muted);padding:9px 18px;border-radius:10px;font-weight:600}
 .vt button.on{background:var(--grad);color:#fff;border-color:transparent}
 .ps{margin-bottom:34px}
@@ -138,6 +142,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <main id="roadmap">
 <div class="vt"><button id="vr" class="on" type="button">Roadmap</button><button id="vpb" type="button">Problems</button><button id="vl" type="button">Languages</button></div>
 <div id="viewR">
+<div class="lt" id="lt"><span class="lbl">Roadmap for</span><button class="on" type="button" data-rl="java">Java</button><button type="button" data-rl="cpp">C++</button><button type="button" data-rl="py">Python</button></div>
 <div class="ov"><div class="row"><span>Your Progress <small id="oc"></small></span><b id="op">0%</b></div><div class="bar"><i id="ob"></i></div><button class="rst" id="rs">Reset progress</button></div>
 <div class="tb"><input id="q" type="search" placeholder="Search topics…" aria-label="Search topics"><div class="ch" id="ch"><button class="on" data-d="">All</button><button data-d="0">Beginner</button><button data-d="1">Intermediate</button><button data-d="2">Advanced</button></div><button class="ic" id="ct">▶ Continue</button><button class="ic" id="ex">Collapse all</button></div>
 <p id="nr" hidden style="color:var(--muted)">No topics match your search.<button class="clr" id="clrR" type="button">Clear filters</button></p>
@@ -176,14 +181,15 @@ const L=[
 ["Spring & Spring Boot",2,"Spring Framework|IoC|Dependency Injection|Spring Container|Beans|Spring Boot|REST API|Controllers|Services|Repository|DTO|JPA|Hibernate|Validation|Exception Handling|Spring AOP"],
 ["Backend Development",2,"Spring Security|JWT Authentication|Role-Based Authorization|REST API Project|MySQL/PostgreSQL|API Testing|Unit Testing|Deployment|Git & GitHub|Docker Basics"]
 ].map(([n,b,t],i)=>{const a=t.split("|");return{n,i,t:a.map((x,j)=>({id:i+"-"+j,x,d:Math.min(2,b+(j>=a.length*.6&&b<2?1:0))}))}});
-const DN=["Beginner","Intermediate","Advanced"],KEY="jmr-progress";
-let done={};try{done=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
+const DN=["Beginner","Intermediate","Advanced"];
 const $=id=>document.getElementById(id),tl=$("tl");
-tl.innerHTML=L.map(l=>`<section class="lv" id="lv${l.i}"><div class="num">${l.i+1}</div><div class="lh" tabindex="0" role="button"><h2><span class="car">▾</span> Level ${l.i+1} — ${l.n}</h2><span id="lc${l.i}"></span></div><div class="bar"><i id="lb${l.i}"></i></div><div class="grid">${l.t.map(t=>`<button class="c" data-id="${t.id}" aria-pressed="false"><span class="chk">✓</span><b>${t.x}</b><span class="badge d${t.d}">${DN[t.d]}</span></button>`).join("")}</div></section>`).join("");
-function upd(){let T=0,D=0;L.forEach(l=>{const n=l.t.filter(t=>done[t.id]).length;T+=l.t.length;D+=n;$("lc"+l.i).textContent=n+"/"+l.t.length;$("lb"+l.i).style.width=n/l.t.length*100+"%";$("lv"+l.i).classList.toggle("done",n===l.t.length)});
+let RL="java",ROADMAPS=null,ro=null;
+const R=()=>ROADMAPS[RL];
+const loadDone=k=>{try{return JSON.parse(localStorage.getItem(k)||"{}")}catch(e){return {}}};
+const save=()=>{try{localStorage.setItem(R().key,JSON.stringify(R().done))}catch(e){}};
+function upd(){const Lv=R().L,dn=R().done;let T=0,D=0;Lv.forEach(l=>{const n=l.t.filter(t=>dn[t.id]).length;T+=l.t.length;D+=n;$("lc"+l.i).textContent=n+"/"+l.t.length;$("lb"+l.i).style.width=n/l.t.length*100+"%";$("lv"+l.i).classList.toggle("done",n===l.t.length)});
 const p=Math.round(D/T*100);$("op").textContent=$("np").textContent=p+"%";$("ob").style.width=p+"%";$("oc").innerHTML=`<small>· ${D} of ${T} topics</small>`;
-document.querySelectorAll(".c").forEach(c=>{const on=!!done[c.dataset.id];c.classList.toggle("on",on);c.setAttribute("aria-pressed",on)})}
+document.querySelectorAll(".c").forEach(c=>{const on=!!dn[c.dataset.id];c.classList.toggle("on",on);c.setAttribute("aria-pressed",on)})}
 var DATA_P1 = {
 "0-0": {d: `The JDK is the developer toolkit with the compiler and tools, the JRE is the runtime environment with the core class libraries, and the JVM is the virtual machine that actually executes bytecode. You write source code, javac turns it into bytecode, and the JVM runs that bytecode on any machine.`, c: `// javac Hello.java -> Hello.class (bytecode)
 // java Hello  -> JVM loads and runs it
@@ -2647,35 +2653,3247 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 $ docker build -t myapp:1.0 .
 $ docker run --rm -p 9000:8080 myapp:1.0`}
 };
+var RDM_CPP1={
+"0-0":{d:`A C++ program is a sequence of statements ending in semicolons, and execution starts in the main function which returns an int. Statements are grouped into blocks with braces, and every declaration must end before the program ends.`,c:`#include <iostream>
+
+int main() {
+    int answer = 6 * 7;
+    std::cout << "The answer is " << answer << "\\n";
+    return 0;
+}`,p:`Write a program that prints your name followed by a colon and your favourite number, then prints "Done".`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string name = "Ada";
+    int lucky = 7;
+    std::cout << name << ": " << lucky << "\\n";
+    std::cout << "Done\\n";
+    return 0;
+}`},
+"0-1":{d:`C++ has three comment styles: single line comments with two slashes, block comments between slash-star markers, and documentation comments with three slashes used by tools like Doxygen.`,c:`// This is a single line comment.
+/*
+   This is a
+   block comment.
+*/
+/** A doc comment for a tool. */
+int value = 42; // trailing comment`,p:`Write a program with a block comment describing the program and a line comment on the age line, then print the age variable.`,s:`#include <iostream>
+
+int main() {
+    /* Prints the age of the user. */
+    int age = 20; // age in years
+    std::cout << age << "\\n";
+    return 0;
+}`},
+"0-2":{d:`C++ is statically typed, so every variable has a fixed type chosen at compile time such as int, double, char or bool. The type decides the memory size and how the value is interpreted.`,c:`int count = 3;
+double price = 19.99;
+char grade = 'A';
+bool active = true;
+long big = 1000000000L;
+
+std::cout << count << " " << price << " " << grade << "\\n";`,p:`Declare variables for a product name, a price as a double, a quantity as an int and a flag as a bool, then print all four on one line separated by spaces.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string name = "Widget";
+    double price = 9.99;
+    int qty = 3;
+    bool inStock = true;
+    std::cout << name << " " << price << " " << qty << " " << inStock << "\\n";
+    return 0;
+}`},
+"0-3":{d:`const makes a variable immutable after its initialisation, and constexpr requires the value to be known at compile time and is often used for named constants. Both protect data from accidental modification.`,c:`const int days = 7;
+constexpr double pi = 3.14159;
+constexpr int square = 3 * 3;
+
+std::cout << days << " " << pi << " " << square << "\\n";`,p:`Declare a constexpr int called LIMIT equal to 100 and a const char string equal to "done", then print both on separate lines.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    constexpr int LIMIT = 100;
+    const std::string done = "done";
+    std::cout << LIMIT << "\\n" << done << "\\n";
+    return 0;
+}`},
+"0-4":{d:`A cast converts a value from one type to another explicitly, using static_cast for safe arithmetic conversions or reinterpret_cast for raw reinterpretation. Implicit conversions happen automatically but may lose data.`,c:`double d = 3.9;
+int i = static_cast<int>(d);      // 3
+int a = 10, b = 3;
+double q = static_cast<double>(a) / b; // 3.333...
+
+char c = static_cast<char>(65);    // 'A'
+std::cout << i << " " << q << " " << c << "\\n";`,p:`Given two ints a equal to 7 and b equal to 2, print the result of integer division and then the result of true division done with a cast.`,s:`#include <iostream>
+
+int main() {
+    int a = 7, b = 2;
+    int whole = a / b;
+    double exact = static_cast<double>(a) / b;
+    std::cout << whole << "\\n";
+    std::cout << exact << "\\n";
+    return 0;
+}`},
+"0-5":{d:`Operators are symbols that act on operands, and they come in groups such as arithmetic, relational, logical, bitwise and assignment. Precedence decides the order in which they are evaluated.`,c:`int a = 10, b = 3;
+int sum = a + b;      // 13
+bool big = a > b;     // true
+bool ok = a > 5 && b < 5; // true
+a += 5;               // a is now 15
+std::cout << sum << " " << big << " " << ok << " " << a << "\\n";`,p:`Given int x equal to 17, print whether x is even, then print x divided by 5 using integer division and then x modulo 5.`,s:`#include <iostream>
+
+int main() {
+    int x = 17;
+    std::cout << (x % 2 == 0) << "\\n";
+    std::cout << x / 5 << "\\n";
+    std::cout << x % 5 << "\\n";
+    return 0;
+}`},
+"0-6":{d:`Standard input and output live in the iostream header through std::cin, std::cout and std::endl. The stream operators chain so several values can be printed in one statement.`,c:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string name;
+    int age;
+    std::cin >> name >> age;
+    std::cout << name << " is " << age << " years old" << std::endl;
+    return 0;
+}`,p:`Read an integer n from standard input and print "Square: " followed by n times n.`,s:`#include <iostream>
+
+int main() {
+    int n;
+    std::cin >> n;
+    std::cout << "Square: " << n * n << "\\n";
+    return 0;
+}`},
+"0-7":{d:`An if statement runs a block when its condition is true and an else branch covers the remaining case, while else if chains more conditions together. Only the first matching branch runs.`,c:`int score = 72;
+if (score >= 90)
+    std::cout << "A\\n";
+else if (score >= 70)
+    std::cout << "B\\n";
+else
+    std::cout << "C\\n";`,p:`Read an integer temperature and print "Cold" when it is below 10, "Warm" when it is below 25 and "Hot" otherwise.`,s:`#include <iostream>
+
+int main() {
+    int t;
+    std::cin >> t;
+    if (t < 10)
+        std::cout << "Cold\\n";
+    else if (t < 25)
+        std::cout << "Warm\\n";
+    else
+        std::cout << "Hot\\n";
+    return 0;
+}`},
+"0-8":{d:`A switch picks one of several constant branches by comparing an integer or enumeration against case labels, and break stops the fall-through into the next case.`,c:`int day = 2;
+switch (day) {
+    case 1: std::cout << "Monday"; break;
+    case 2: std::cout << "Tuesday"; break;
+    default: std::cout << "Unknown";
+}`,p:`Read an integer from 1 to 3 and print "One", "Two" or "Three" using a switch, printing "Invalid" for anything else.`,s:`#include <iostream>
+
+int main() {
+    int n;
+    std::cin >> n;
+    switch (n) {
+        case 1: std::cout << "One\\n"; break;
+        case 2: std::cout << "Two\\n"; break;
+        case 3: std::cout << "Three\\n"; break;
+        default: std::cout << "Invalid\\n";
+    }
+    return 0;
+}`},
+"0-9":{d:`A for loop repeats a known number of times, a while loop repeats while a condition holds and a range-based for iterates over a container. The loop counter or condition must be updated or the loop never ends.`,c:`for (int i = 0; i < 3; ++i)
+    std::cout << i << " ";        // 0 1 2
+
+int n = 5;
+while (n > 0) { std::cout << n; --n; }
+
+for (int x : {10, 20, 30})
+    std::cout << x << " ";`,p:`Print every even number from 2 up to and including 10 on one line separated by spaces.`,s:`#include <iostream>
+
+int main() {
+    for (int i = 2; i <= 10; i += 2)
+        std::cout << i << " ";
+    std::cout << "\\n";
+    return 0;
+}`},
+"0-10":{d:`An array is a fixed number of elements of the same type stored contiguously, indexed from zero. The size must be known at compile time or given at run time, and the first index out of bounds access is undefined behaviour.`,c:`int a[5] = {1, 2, 3, 4, 5};
+int b[3]{};
+b[0] = 10;
+
+for (int i = 0; i < 5; ++i)
+    std::cout << a[i] << " ";
+std::cout << "\\n";`,p:`Given an array of five ints, print the largest value found in the array.`,s:`#include <iostream>
+#include <algorithm>
+
+int main() {
+    int a[5] = {4, 9, 2, 7, 5};
+    int mx = a[0];
+    for (int i = 1; i < 5; ++i)
+        if (a[i] > mx) mx = a[i];
+    std::cout << mx << "\\n";
+    return 0;
+}`},
+"0-11":{d:`std::string is a growable text type from the string header that manages its own memory and offers concatenation, comparison, search and substrings. Include <string> to use it.`,c:`#include <string>
+
+std::string s = "Hello";
+s += ", world";          // Hello, world
+size_t n = s.length();   // 12
+std::string part = s.substr(0, 5); // Hello
+bool same = (s == "Hello, world");`,p:`Read two words from standard input and print them separated by a hyphen.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string a, b;
+    std::cin >> a >> b;
+    std::cout << a << "-" << b << "\\n";
+    return 0;
+}`},
+"1-0":{d:`A function is a named block with a parameter list, a return type and a body that is declared before use and defined once. Parameters receive the arguments passed at the call site.`,c:`int add(int a, int b) {
+    return a + b;
+}
+
+void greet(const std::string& name) {
+    std::cout << "Hi " << name << "\\n";
+}
+
+greet("Ada");
+std::cout << add(2, 3);`,p:`Write a function int square(int x) that returns x times x and print the result of calling it with 7.`,s:`#include <iostream>
+
+int square(int x) {
+    return x * x;
+}
+
+int main() {
+    std::cout << square(7) << "\\n";
+    return 0;
+}`},
+"1-1":{d:`Default arguments let a parameter be omitted at the call site, in which case the declared default is used. Once a parameter has a default, every later parameter must also have one.`,c:`int power(int base, int exp = 2) {
+    int result = 1;
+    for (int i = 0; i < exp; ++i) result *= base;
+    return result;
+}
+
+std::cout << power(5) << " ";    // 25
+std::cout << power(5, 3) << "\\n"; // 125`,p:`Write a function double tax(double amount, double rate = 0.1) that returns amount times rate and print the tax for 200.0 with the default rate.`,s:`#include <iostream>
+
+double tax(double amount, double rate = 0.1) {
+    return amount * rate;
+}
+
+int main() {
+    std::cout << tax(200.0) << "\\n";
+    return 0;
+}`},
+"1-2":{d:`Passing by value copies the argument so the function cannot change the caller variable, while passing by reference binds a parameter to the original object and can modify it. Const references avoid the copy but forbid changes.`,c:`void byValue(int x) { x = 100; }
+void byRef(int& x)    { x = 100; }
+void readOnly(const int& x) { std::cout << x; }
+
+int a = 1;
+byValue(a); // a is still 1
+byRef(a);    // a is now 100`,p:`Write a function void increment(int& x) that adds one to x and call it with a variable equal to 5, then print the variable.`,s:`#include <iostream>
+
+void increment(int& x) {
+    ++x;
+}
+
+int main() {
+    int n = 5;
+    increment(n);
+    std::cout << n << "\\n";
+    return 0;
+}`},
+"1-3":{d:`A function returns a value of its declared type with a return statement, and returning by value moves or copies the result. A function declared void returns nothing, while multiple results are best returned in a struct or std::tuple.`,c:`int maxOf(int a, int b) {
+    return a > b ? a : b;
+}
+
+bool inRange(int v) {
+    if (v < 0 || v > 100)
+        return false;
+    return true;
+}
+
+double half(double d) { return d / 2.0; }`,p:`Write a function int clamp(int v) that returns 0 when v is below 0, returns 100 when v is above 100 and otherwise returns v.`,s:`#include <iostream>
+
+int clamp(int v) {
+    if (v < 0) return 0;
+    if (v > 100) return 100;
+    return v;
+}
+
+int main() {
+    std::cout << clamp(-5) << clamp(42) << clamp(120) << "\\n";
+    return 0;
+}`},
+"1-4":{d:`Function overloading gives one name several functions that differ only in parameter types or count, so the compiler picks the right one at the call site. The return type alone is not enough to distinguish overloads.`,c:`int sum(int a, int b)       { return a + b; }
+double sum(double a, double b) { return a + b; }
+int sum(int a)                { return a; }
+
+std::cout << sum(1, 2) << " ";     // 3
+std::cout << sum(1.5, 2.5);        // 4`,p:`Define two overloaded functions int twice(int) and double twice(double) that return the value doubled and print both results.`,s:`#include <iostream>
+
+int twice(int v) { return v * 2; }
+double twice(double v) { return v * 2; }
+
+int main() {
+    std::cout << twice(5) << " " << twice(2.5) << "\\n";
+    return 0;
+}`},
+"1-5":{d:`A function template defines a generic function using template parameters so one definition works for many types, and template argument deduction fills in the types from the call.`,c:`#include <iostream>
+
+template <typename T>
+T maxOf(T a, T b) {
+    return a > b ? a : b;
+}
+
+std::cout << maxOf(3, 9) << " ";    // 9
+std::cout << maxOf(2.5, 1.5);      // 2.5`,p:`Write a template function T add(T a, T b) that returns a plus b and print its result for two ints and two doubles.`,s:`#include <iostream>
+
+template <typename T>
+T add(T a, T b) {
+    return a + b;
+}
+
+int main() {
+    std::cout << add(2, 3) << " " << add(1.5, 2.5) << "\\n";
+    return 0;
+}`},
+"1-6":{d:`A lambda is an unnamed function written inline with a parameter list, an optional return type and a body, and it can capture variables from the surrounding scope by value or by reference.`,c:`#include <algorithm>
+#include <vector>
+
+int base = 10;
+auto add = [](int x) { return x + 1; };
+auto withCapture = [base](int x) { return x + base; };
+auto byRef = [&base](int x) { base = x; };
+
+std::cout << add(4) << withCapture(5) << "\\n";`,p:`Write a lambda that takes two ints and returns their sum, then print the result of applying it to 3 and 4.`,s:`#include <iostream>
+
+int main() {
+    auto add = [](int a, int b) { return a + b; };
+    std::cout << add(3, 4) << "\\n";
+    return 0;
+}`},
+"1-7":{d:`Recursion is a function calling itself on a smaller problem until it reaches a base case that returns directly. Every recursive call must move toward the base case so the recursion terminates.`,c:`long factorial(int n) {
+    if (n <= 1) return 1;      // base case
+    return n * factorial(n - 1);
+}
+
+long fib(int n) {
+    if (n < 2) return n;
+    return fib(n - 1) + fib(n - 2);
+}`,p:`Write a recursive function int sumDigits(int n) that returns the sum of the digits of n, with a base case returning 0 when n is 0.`,s:`#include <iostream>
+
+int sumDigits(int n) {
+    if (n == 0) return 0;
+    return n % 10 + sumDigits(n / 10);
+}
+
+int main() {
+    std::cout << sumDigits(1234) << "\\n";
+    return 0;
+}`},
+"1-8":{d:`A namespace groups names to avoid collisions and every name in the standard library lives in namespace std. You open one with using namespace or qualify names with the namespace name.`,c:`namespace geometry {
+    const double pi = 3.14159;
+    double area(double r) { return pi * r * r; }
+}
+
+using namespace geometry;
+
+std::cout << area(2.0) << "\\n";
+std::cout << std::string("x");`,p:`Define a namespace mathutil with a function int triple(int x) returning x times three, then call it fully qualified from main.`,s:`#include <iostream>
+
+namespace mathutil {
+    int triple(int x) { return x * 3; }
+}
+
+int main() {
+    std::cout << mathutil::triple(5) << "\\n";
+    return 0;
+}`},
+"1-9":{d:`Code is included with the preprocessor using include directives, angle brackets for system headers and quotes for project headers. Headers declare interfaces such as std::cout and std::vector, so every used type needs its header.`,c:`#include <iostream>   // system header
+#include <vector>      // std::vector
+#include "my_utils.h" // your own header
+
+int main() {
+    std::vector<int> v{1, 2, 3};
+    std::cout << v.size() << "\\n";
+}`,p:`Write a program that includes iostream and string and prints the size of the string "hello" to the standard output.`,s:`#include <iostream>
+#include <string>
+
+int main() {
+    std::string s = "hello";
+    std::cout << s.size() << "\\n";
+    return 0;
+}`},
+"1-10":{d:`A scope limits where a name is visible and an inner declaration with the same name hides the outer one, which is called shadowing. Shadowing is legal but usually signals a bug and can be avoided with a different name.`,c:`int x = 1;
+
+void f() {
+    int x = 2;     // shadows the global x
+    {
+        int x = 3; // shadows the function x
+        std::cout << x; // 3
+    }
+    std::cout << x; // 2
+}
+
+std::cout << x;     // 1`,p:`Given a global int named level set to 1 and a function that declares its own int level set to 5, print the local one and then the global one.`,s:`#include <iostream>
+
+int level = 1;
+
+void show() {
+    int level = 5; // shadows the global
+    std::cout << level << "\\n";
+}
+
+int main() {
+    show();
+    std::cout << level << "\\n";
+    return 0;
+}`},
+"2-0":{d:`A class is a user-defined type that bundles data members and member functions into one unit, declared with the class keyword followed by a name and a body. Its members are private by default.`,c:`class Point {
+public:
+    int x = 0;
+    int y = 0;
+    void move(int dx, int dy) {
+        x += dx;
+        y += dy;
+    }
+};
+
+Point p;
+p.move(3, 4);`,p:`Define a class Counter with a public int value initialised to 0 and a method bump that adds 5 to it, then print the value after two bumps.`,s:`#include <iostream>
+
+class Counter {
+public:
+    int value = 0;
+    void bump() { value += 5; }
+};
+
+int main() {
+    Counter c;
+    c.bump();
+    c.bump();
+    std::cout << c.value << "\\n";
+    return 0;
+}`},
+"2-1":{d:`An object is one concrete instance of a class, so each object holds its own copy of the member data. Creating one at run time means constructing it, and the two are used interchangeably in casual speech.`,c:`struct P { int a = 1; };
+P p1;
+P p2;
+p2.a = 9;
+
+std::cout << p1.a << " "; // 1
+std::cout << p2.a << "\\n"; // 9
+
+P objs[3];                 // three objects`,p:`Define a struct Point holding ints x and y, create two objects with different values and print both x values on one line.`,s:`#include <iostream>
+
+struct Point { int x, y; };
+
+int main() {
+    Point a{1, 2};
+    Point b{7, 8};
+    std::cout << a.x << " " << b.x << "\\n";
+    return 0;
+}`},
+"2-2":{d:`A constructor is a special member function with the same name as the class that runs when an object is created and sets up the initial state. Default arguments or delegation keep constructor lists short.`,c:`class Point {
+    int x, y;
+public:
+    Point() : x(0), y(0) {}                 // default
+    Point(int a, int b) : x(a), y(b) {}      // parameterised
+    Point(int a) : Point(a, 0) {}           // delegating
+};`,p:`Define a class Box with a constructor taking an int size initialised to 1, then create two boxes with sizes 3 and 5 and print their sizes.`,s:`#include <iostream>
+
+class Box {
+    int s;
+public:
+    Box(int size = 1) : s(size) {}
+    int size() const { return s; }
+};
+
+int main() {
+    Box a(3), b(5);
+    std::cout << a.size() << " " << b.size() << "\\n";
+    return 0;
+}`},
+"2-3":{d:`A destructor is a special member function written with a tilde before the class name and it runs automatically when an object leaves scope or is destroyed. It should release resources and must not throw.`,c:`class Tracker {
+public:
+    Tracker()  { std::cout << "start\\n"; }
+    ~Tracker() { std::cout << "stop\\n"; }
+};
+
+Tracker t;      // prints start
+// end of scope prints stop`,p:`Define a class Timer whose constructor prints "Start" and whose destructor prints "End", then create an instance inside a scope.`,s:`#include <iostream>
+
+class Timer {
+public:
+    Timer() { std::cout << "Start\\n"; }
+    ~Timer() { std::cout << "End\\n"; }
+};
+
+int main() {
+    Timer t;
+    return 0;
+}`},
+"2-4":{d:`Inside a non-static member function the this pointer holds the address of the current object, so members can be accessed through it. It is what lets a method tell different instances apart and lets you return a reference to yourself.`,c:`class Box {
+    int v = 0;
+public:
+    Box& set(int n) {
+        this->v = n;   // this-> is required here
+        return *this;  // chaining
+    }
+    int get() { return v; }
+};
+
+Box b;
+b.set(5).set(9);
+std::cout << b.get();`,p:`Define a class Counter with an int n, a method set(int) that assigns n and returns *this, and print the value after calling set twice in one expression.`,s:`#include <iostream>
+
+class Counter {
+    int n = 0;
+public:
+    Counter& set(int v) {
+        this->n = v;
+        return *this;
+    }
+    int get() { return n; }
+};
+
+int main() {
+    Counter c;
+    c.set(3).set(8);
+    std::cout << c.get() << "\\n";
+    return 0;
+}`},
+"2-5":{d:`The access specifiers public, private and protected control where members may be used, with class defaulting to private and struct defaulting to public. Data is usually private with public accessors to keep the invariant intact.`,c:`class Account {
+    int balance = 0;   // private by default
+protected:
+    std::string owner;
+public:
+    void deposit(int amt) { balance += amt; }
+    int get() const { return balance; }
+};
+
+Account a;
+a.deposit(50);   // fine
+// a.balance = 0;  // error, private`,p:`Define a class Vault with a private int secret set to 42 and a public method reveal that returns it, then print the result of calling reveal.`,s:`#include <iostream>
+
+class Vault {
+    int secret = 42;
+public:
+    int reveal() const { return secret; }
+};
+
+int main() {
+    Vault v;
+    std::cout << v.reveal() << "\\n";
+    return 0;
+}`},
+"2-6":{d:`A static data member belongs to the class rather than to any object, so all instances share it, and it must be defined once outside the class in C++17. Static member functions likewise have no this pointer and only see static members.`,c:`class Counter {
+public:
+    static int instances;
+    Counter() { ++instances; }
+};
+int Counter::instances = 0;
+
+Counter a, b;
+std::cout << Counter::instances; // 2`,p:`Define a class Tracker with a static int count initialised to 0 and a constructor that increments it, create two objects and print the count.`,s:`#include <iostream>
+
+class Tracker {
+public:
+    static int count;
+    Tracker() { ++count; }
+};
+int Tracker::count = 0;
+
+int main() {
+    Tracker a, b;
+    std::cout << Tracker::count << "\\n";
+    return 0;
+}`},
+"2-7":{d:`A const member function is marked const after the parameter list and promises not to modify the object, which lets it be called on const objects and const references. The members it touches are read only.`,c:`class Counter {
+    int n = 0;
+public:
+    void bump() { ++n; }
+    int get() const { return n; }
+};
+
+const Counter c;
+std::cout << c.get(); // ok
+// c.bump();           // error, not const`,p:`Define a class Temperature with a private double celsius, a setter and a const method isFreezing that returns true when the value is below zero.`,s:`#include <iostream>
+
+class Temperature {
+    double celsius = 0.0;
+public:
+    void set(double v) { celsius = v; }
+    bool isFreezing() const { return celsius < 0.0; }
+};
+
+int main() {
+    Temperature t;
+    t.set(-3.5);
+    std::cout << t.isFreezing() << "\\n";
+    return 0;
+}`},
+"2-8":{d:`Operator overloading defines how standard operators behave for a user-defined type by writing member or free functions with the operator keyword. The overload must take at least one operand of the class type.`,c:`#include <iostream>
+
+struct Vec {
+    int x, y;
+    Vec operator+(const Vec& o) const {
+        return {x + o.x, y + o.y};
+    }
+    bool operator==(const Vec& o) const {
+        return x == o.x && y == o.y;
+    }
+};
+
+Vec a{1, 2}, b{3, 4};
+Vec c = a + b;
+std::cout << c.x << " " << c.y << "\\n";`,p:`Define a struct Money holding an int amount with an operator+ that returns the sum of two Money values, then print the amount of the result of 5 plus 7.`,s:`#include <iostream>
+
+struct Money {
+    int amount;
+    Money operator+(const Money& o) const {
+        return {amount + o.amount};
+    }
+};
+
+int main() {
+    Money a{5}, b{7};
+    std::cout << (a + b).amount << "\\n";
+    return 0;
+}`},
+"2-9":{d:`A friend function is a non-member function granted access to the private and protected members of a class by the friend keyword inside the class. Friend functions keep the operator or helper outside the class interface.`,c:`class Box {
+    int w = 1, h = 2;
+    friend int area(const Box& b);
+};
+
+int area(const Box& b) {
+    return b.w * b.h;  // private access allowed
+}
+
+std::cout << area(Box{});`,p:`Define a class Secret holding a private int value of 7 and a friend function int peek(const Secret&) that returns it, then print the result of calling peek.`,s:`#include <iostream>
+
+class Secret {
+    int value = 7;
+    friend int peek(const Secret& s);
+};
+
+int peek(const Secret& s) {
+    return s.value;
+}
+
+int main() {
+    std::cout << peek(Secret{}) << "\\n";
+    return 0;
+}`},
+"2-10":{d:`Copying constructs a new object from an existing one with the copy constructor and copy assignment, while moving transfers resources with the move constructor and move assignment. The rule of five says you write all five when you manage a resource yourself, and prefer std::vector or std::string to avoid it.`,c:`struct Res {
+    std::vector<int> data;
+    Res(const Res& o) : data(o.data) {}      // copy ctor
+    Res(Res&& o) noexcept : data(std::move(o.data)) {} // move ctor
+    Res& operator=(Res&& o) noexcept {
+        data = std::move(o.data);
+        return *this;
+    }
+};`,p:`Define a struct Holder holding a std::vector int, build it from an initialiser list of three values and print its size.`,s:`#include <iostream>
+#include <vector>
+
+struct Holder {
+    std::vector<int> data;
+};
+
+int main() {
+    Holder h{{1, 2, 3}};
+    std::cout << h.data.size() << "\\n";
+    return 0;
+}`},
+"2-11":{d:`Composition is a has-a relationship where one object holds another as a member, so the contained part is constructed and destroyed with its owner. It is preferred over inheritance for reuse because it avoids fragile base class coupling.`,c:`class Engine {
+public:
+    void start() { std::cout << "vroom\\n"; }
+};
+
+class Car {
+    Engine e;   // composition by member
+public:
+    void drive() { e.start(); std::cout << "moving\\n"; }
+};
+
+Car c;
+c.drive();`,p:`Define a struct Wheel holding an int size and a struct Car holding one Wheel, then create a Car with a size 15 wheel and print the wheel size.`,s:`#include <iostream>
+
+struct Wheel { int size; };
+struct Car { Wheel w; };
+
+int main() {
+    Car c{{15}};
+    std::cout << c.w.size << "\\n";
+    return 0;
+}`},
+"3-0":{d:`Inheritance lets a derived class reuse and extend a base class, written with a colon and an access specifier followed by the base type in the derived declaration. The derived class can add members and override base behaviour.`,c:`class Animal {
+public:
+    void speak() const { std::cout << "..."; }
+};
+
+class Dog : public Animal {
+public:
+    void fetch() const { std::cout << "ball"; }
+};
+
+Dog d;
+d.speak();  // inherited
+d.fetch();  // own`,p:`Define a base class Shape with a public double area method returning 0.0 and a derived class Square that overrides area to return 4.0, then print a Square area.`,s:`#include <iostream>
+
+class Shape {
+public:
+    double area() const { return 0.0; }
+};
+
+class Square : public Shape {
+public:
+    double area() const override { return 4.0; }
+};
+
+int main() {
+    Square s;
+    std::cout << s.area() << "\\n";
+    return 0;
+}`},
+"3-1":{d:`In a derived class, public members stay public, private members of the base stay private and protected members are reachable from the derived class but not from outside. The access specifier in the inheritance list controls how the base appears to callers.`,c:`class Base {
+protected:
+    int value = 7;   // reachable in derived
+private:
+    int hidden = 1;  // not reachable in derived
+public:
+    int get() const { return value; }
+};
+
+class Derived : public Base {
+public:
+    int use() const { return value; }  // ok
+    // int bad() { return hidden; }     // error
+};`,p:`Define a base class Base with a protected int value of 5 and a public method show, and a class Derived that publicly inherits Base and adds a method getValue returning value.`,s:`#include <iostream>
+
+class Base {
+protected:
+    int value = 5;
+public:
+    void show() const { std::cout << value << "\\n"; }
+};
+
+class Derived : public Base {
+public:
+    int getValue() const { return value; }
+};
+
+int main() {
+    Derived d;
+    d.show();
+    std::cout << d.getValue() << "\\n";
+    return 0;
+}`},
+"3-2":{d:`Derived constructors do not inherit base constructors automatically, they call one base initialiser first in the member initialisation list, and that base constructor runs before the derived body. If omitted, the base default constructor is used.`,c:`class Base {
+public:
+    Base(int v) { std::cout << "base " << v << "\\n"; }
+};
+
+class Derived : public Base {
+    int w;
+public:
+    Derived(int v, int x) : Base(v), w(x) {}
+};`,p:`Define a base class Base taking an int id and a derived class Derived taking two ints, calling Base with the first and printing both ids, then create it with 3 and 4.`,s:`#include <iostream>
+
+class Base {
+protected:
+    int id;
+public:
+    Base(int v) : id(v) {}
+};
+
+class Derived : public Base {
+    int extra;
+public:
+    Derived(int v, int e) : Base(v), extra(e) {
+        std::cout << id << " " << extra << "\\n";
+    }
+};
+
+int main() {
+    Derived d(3, 4);
+    return 0;
+}`},
+"3-3":{d:`A virtual function lets a base class call the derived override through a base pointer or reference, and the override must have the same signature. A destructor should be virtual when a class is meant to be used polymorphically.`,c:`class Animal {
+public:
+    virtual void speak() const { std::cout << "?"; }
+    virtual ~Animal() = default;
+};
+
+class Dog : public Animal {
+public:
+    void speak() const override { std::cout << "woof"; }
+};
+
+Animal* a = new Dog();
+a->speak();   // woof`,p:`Define a base class Printer with a virtual method print and a derived class LoudPrinter overriding it to print "LOUD", then call print through a base pointer.`,s:`#include <iostream>
+
+class Printer {
+public:
+    virtual void print() const { std::cout << "quiet\\n"; }
+    virtual ~Printer() = default;
+};
+
+class LoudPrinter : public Printer {
+public:
+    void print() const override { std::cout << "LOUD\\n"; }
+};
+
+int main() {
+    Printer* p = new LoudPrinter();
+    p->print();
+    delete p;
+    return 0;
+}`},
+"3-4":{d:`A pure virtual function is declared with the = 0 suffix and has no body, so the class cannot be instantiated but derived classes must override it. A class with at least one pure virtual function is abstract.`,c:`class Shape {
+public:
+    virtual double area() const = 0;   // pure virtual
+    virtual ~Shape() = default;
+};
+
+class Circle : public Shape {
+public:
+    double area() const override { return 3.14; }
+};`,p:`Define an abstract class Animal with a pure virtual method speak and a concrete class Dog that overrides it to print "Woof", then call speak on a Dog object.`,s:`#include <iostream>
+
+class Animal {
+public:
+    virtual void speak() const = 0;
+    virtual ~Animal() = default;
+};
+
+class Dog : public Animal {
+public:
+    void speak() const override { std::cout << "Woof\\n"; }
+};
+
+int main() {
+    Dog d;
+    d.speak();
+    return 0;
+}`},
+"3-5":{d:`An abstract class is one that contains at least one pure virtual function, so it exists to be inherited from rather than created. It may still hold data and non-virtual methods, which makes it a useful base.`,c:`class Base {
+public:
+    int id = 1;
+    void describe() const { std::cout << "id " << id; }
+    virtual void run() const = 0;
+    virtual ~Base() = default;
+};
+
+// Base b;   // error: abstract`,p:`Define an abstract class Job with a virtual method run marked = 0 and a concrete class PrintJob overriding it, then call run on a PrintJob pointer to a Base.`,s:`#include <iostream>
+
+class Job {
+public:
+    virtual void run() const = 0;
+    virtual ~Job() = default;
+};
+
+class PrintJob : public Job {
+public:
+    void run() const override { std::cout << "printing\\n"; }
+};
+
+int main() {
+    Job* j = new PrintJob();
+    j->run();
+    delete j;
+    return 0;
+}`},
+"3-6":{d:`An override must match the base signature exactly in name, parameters and constness, and the override keyword makes the compiler check that. The return type may be covariant, and an overload in the derived class can hide the base overload.`,c:`class Base {
+public:
+    virtual int f(int) const { return 1; }
+};
+
+class Derived : public Base {
+public:
+    int f(int) const override { return 2; }  // ok
+    // int f(int) { return 3; }              // error, not an override
+};`,p:`Define a base class Base with a virtual method name returning the string "Base" and a derived class overriding it to return "Derived", then print what a Base pointer to Derived returns.`,s:`#include <iostream>
+#include <string>
+
+class Base {
+public:
+    virtual std::string name() const { return "Base"; }
+    virtual ~Base() = default;
+};
+
+class Derived : public Base {
+public:
+    std::string name() const override { return "Derived"; }
+};
+
+int main() {
+    Base* b = new Derived();
+    std::cout << b->name() << "\\n";
+    delete b;
+    return 0;
+}`},
+"3-7":{d:`A class can inherit from several bases by listing them separated by commas, and it then holds a subobject of each and inherits all their members. Names that appear in more than one base must be qualified to say which one you mean.`,c:`class A { public: int x = 1; };
+class B { public: int x = 2; void hello() {} };
+
+class C : public A, public B {
+public:
+    int pick() { return A::x + B::x; }  // disambiguate
+    void greet() { B::hello(); }
+};`,p:`Define classes Flyer and Swimmer each with a public method sound, then a class Bird that inherits both publicly and calls each sound in its own sound method.`,s:`#include <iostream>
+
+class Flyer {
+public:
+    void sound() const { std::cout << "flap "; }
+};
+
+class Swimmer {
+public:
+    void sound() const { std::cout << "splash"; }
+};
+
+class Bird : public Flyer, public Swimmer {
+public:
+    void sound() const { Flyer::sound(); Swimmer::sound(); std::cout << "\\n"; }
+};
+
+int main() {
+    Bird b;
+    b.sound();
+    return 0;
+}`},
+"3-8":{d:`A dynamic_cast converts a base pointer or reference down to a derived type at run time and returns nullptr or throws on failure, while typeid with dynamic_cast reports the actual type of a polymorphic object. Both need a polymorphic base class to work.`,c:`#include <iostream>
+#include <typeinfo>
+
+Base* b = new Derived();
+if (Derived* d = dynamic_cast<Derived*>(b))
+    std::cout << d->extra() << "\\n";
+std::cout << typeid(*b).name() << "\\n";
+std::cout << (typeid(*b) == typeid(Derived));`,p:`Store a Derived object in a Base pointer and print "Derived" if the dynamic_cast to Derived succeeds, otherwise print "Unknown".`,s:`#include <iostream>
+
+struct Base { virtual ~Base() = default; };
+struct Derived : Base { int tag = 1; };
+
+int main() {
+    Base* b = new Derived();
+    if (dynamic_cast<Derived*>(b) != nullptr)
+        std::cout << "Derived\\n";
+    else
+        std::cout << "Unknown\\n";
+    delete b;
+    return 0;
+}`}
+};
+var RDM_CPP2={
+"4-0":{d:`A pointer is a variable that stores a memory address, and the dereference operator reads or writes the object at that address. A null pointer points at nothing and must not be dereferenced.`,c:`int value = 42;
+int* p = &value;   // p holds the address of value
+std::cout << *p << '\\n';   // 42
+*p = 7;                     // writes through the pointer
+std::cout << value << '\\n'; // 7
+int* q = nullptr;            // a pointer to nothing`,p:`Write a function that takes an int pointer and doubles the value it points to, then call it on a variable holding 5 and print the variable.`,s:`void doubleIt(int* p) {
+    *p *= 2;
+}
+
+int x = 5;
+doubleIt(&x);
+std::cout << x << '\\n';   // 10`},
+"4-1":{d:`Pointer arithmetic moves a pointer by whole elements rather than by bytes, so adding 1 on an int pointer advances to the next int. Subtracting two pointers gives the distance in elements between them.`,c:`int data[5] = {10, 20, 30, 40, 50};
+int* p = data;
+std::cout << *(p + 2) << '\\n';   // 30
+p += 3;
+std::cout << *p << '\\n';         // 40
+int* last = data + 4;
+std::cout << (last - data) << '\\n'; // 4`,p:`Write a program that reads six integers into an array, then uses pointer arithmetic to print the first, the middle and the last value.`,s:`int a[6];
+for (int i = 0; i < 6; ++i)
+    std::cin >> a[i];
+
+int* p = a;
+std::cout << *p << ' ' << *(p + 3) << ' ' << *(p + 5) << '\\n';`},
+"4-2":{d:`A reference is an alias bound to an existing object at declaration time and it cannot be rebound later. Unlike a pointer it is never null and needs no dereference syntax.`,c:`int value = 5;
+int& ref = value;          // ref is another name for value
+ref = 10;
+std::cout << value << '\\n'; // 10
+
+void scale(int& n) { n *= 2; }
+scale(value);
+std::cout << value << '\\n'; // 20`,p:`Write a function that takes an int reference and swaps it with another int reference, then call it on two variables and print both.`,s:`void swapRef(int& a, int& b) {
+    int t = a;
+    a = b;
+    b = t;
+}
+
+int x = 1, y = 2;
+swapRef(x, y);
+std::cout << x << ' ' << y << '\\n';   // 2 1`},
+"4-3":{d:`The address-of operator returns the address of an lvalue, which is how you build a pointer or pass an argument for a function to modify in place. Applying it to a pointer variable gives a pointer to that pointer.`,c:`int x = 5;
+int* p = &x;
+
+std::cout << p << '\\n';    // the address, like 0x7ffd...
+std::cout << *p << '\\n';   // 5, the value at that address
+
+int** pp = &p;              // address of the pointer itself
+std::cout << **pp << '\\n'; // 5`,p:`Write a program that stores the address of an int in a pointer, prints the value through the pointer, then updates the variable through the pointer and prints it again.`,s:`int x = 5;
+int* p = &x;
+
+std::cout << *p << '\\n';
+*p = 25;
+std::cout << x << '\\n';   // 25`},
+"4-4":{d:`new allocates an object on the heap and returns a pointer to it, while delete returns that memory to the allocator. Arrays allocated with new[] must be released with delete[] and every new needs exactly one delete.`,c:`int* p = new int(7);
+std::cout << *p << '\\n';   // 7
+*p = 9;
+delete p;
+p = nullptr;                // safe to test now
+
+int* arr = new int[3]{1, 2, 3};
+delete[] arr;               // note the brackets`,p:`Write a program that allocates an array of five ints on the heap, fills it with the squares of its indices, prints the values and then frees the array.`,s:`int n = 5;
+int* a = new int[n];
+for (int i = 0; i < n; ++i)
+    a[i] = i * i;
+for (int i = 0; i < n; ++i)
+    std::cout << a[i] << ' ';
+std::cout << '\\n';
+delete[] a;`},
+"4-5":{d:`malloc and free are the C style heap functions that deal in raw bytes with no constructors or type safety, so in C++ new and smart pointers are preferred. Memory from malloc should always be released with free.`,c:`int* p = static_cast<int*>(std::malloc(sizeof(int) * 3));
+for (int i = 0; i < 3; ++i) p[i] = i + 1;
+std::cout << p[2] << '\\n';   // 3
+std::free(p);
+
+// No destructors run: use new for objects, malloc for raw blocks.`,p:`Write a program that allocates space for three doubles with malloc, stores the values 1.5, 2.5 and 3.5 in them, prints the middle value and then frees the memory.`,s:`double* d = static_cast<double*>(std::malloc(sizeof(double) * 3));
+d[0] = 1.5;
+d[1] = 2.5;
+d[2] = 3.5;
+std::cout << d[1] << '\\n';
+std::free(d);`},
+"4-6":{d:`std::unique_ptr is a move-only smart pointer that owns its object and deletes it automatically when it goes out of scope, which makes leaks impossible for single owners.`,c:`auto p = std::make_unique<int>(10);
+std::cout << *p << '\\n';   // 10
+
+auto q = std::move(p);      // ownership transfers, p is now null
+std::cout << *q << '\\n';   // 10
+std::cout << (p == nullptr) << '\\n'; // 1`,p:`Write a program that creates a unique_ptr owning an int set to 5, prints the value, then releases ownership with reset and prints that the pointer is now null.`,s:`auto p = std::make_unique<int>(5);
+std::cout << *p << '\\n';
+p.reset();
+std::cout << (p == nullptr) << '\\n';   // 1`},
+"4-7":{d:`std::shared_ptr shares ownership of an object through a reference count and frees it when the last owner dies, while std::weak_ptr points at the same object without counting it and is used to break cycles.`,c:`auto a = std::make_shared<int>(3);
+std::weak_ptr<int> w = a;
+std::cout << a.use_count() << '\\n';     // 1
+{
+    auto b = a;                         // second owner
+    std::cout << a.use_count() << '\\n'; // 2
+}
+std::cout << *w.lock() << '\\n';        // 3, still alive`,p:`Write a program that creates a shared_ptr to a string, copies the shared_ptr, prints the use count inside the scope and again after the scope ends.`,s:`auto a = std::make_shared<std::string>("shared");
+{
+    auto b = a;
+    std::cout << a.use_count() << '\\n';   // 2
+}
+std::cout << a.use_count() << '\\n';       // 1
+std::cout << *a << '\\n';                  // shared`},
+"4-8":{d:`A memory leak is heap memory that is never released, and a dangling pointer refers to memory that has already been freed. Setting a pointer to nullptr after delete, and preferring smart pointers, removes both hazards.`,c:`int* p = new int(3);
+delete p;
+p = nullptr;
+if (p != nullptr)
+    std::cout << *p;      // skipped, p is null
+std::cout << (p == nullptr) << '\\n';   // 1`,p:`Write a program that demonstrates a dangling pointer by deleting an allocated int, then setting the pointer to nullptr and printing 1 if the pointer is null.`,s:`int* p = new int(8);
+std::cout << *p << '\\n';
+delete p;
+p = nullptr;
+std::cout << (p == nullptr) << '\\n';   // 1`},
+"5-0":{d:`std::vector is a resizable contiguous sequence with random access iterators and constant time push back at the end. It is the default choice when you need a growable array.`,c:`std::vector<int> v{1, 2, 3};
+v.push_back(4);
+v.push_back(5);
+std::cout << v.size() << '\\n';   // 5
+std::cout << v[1] << '\\n';      // 2
+v.pop_back();                    // drops the 5
+std::cout << v.back() << '\\n';  // 4`,p:`Write a program that reads five integers from standard input into a vector, then prints the size of the vector and the sum of its elements.`,s:`std::vector<int> v(5);
+int sum = 0;
+for (int& x : v) {
+    std::cin >> x;
+    sum += x;
+}
+std::cout << v.size() << ' ' << sum << '\\n';`},
+"5-1":{d:`std::list is a doubly linked list whose nodes are separate in memory, so insert and erase at a known position are constant time while random access is linear. Use it when you splice and insert in the middle constantly.`,c:`std::list<int> l{1, 3, 5};
+l.push_front(0);
+l.push_back(6);
+auto it = l.begin();
+++it;                    // points at 1
+l.insert(it, 9);         // 0 9 1 3 5 6
+l.erase(it);             // back to 0 1 3 5 6`,p:`Write a program that builds a list from five integers read from standard input, then inserts 99 at the front, erases the first element and prints the remaining values.`,s:`std::list<int> l;
+for (int i = 0; i < 5; ++i) {
+    int x;
+    std::cin >> x;
+    l.push_back(x);
+}
+l.push_front(99);
+l.pop_front();
+for (int x : l)
+    std::cout << x << ' ';
+std::cout << '\\n';`},
+"5-2":{d:`std::deque is a double ended queue that keeps elements in contiguous blocks, giving constant time push and pop at both ends plus random access. It is the default underlying container for std::queue and std::stack.`,c:`std::deque<int> d;
+d.push_back(2);
+d.push_front(1);
+d.push_back(3);
+d[1] = 20;                 // random access works
+std::cout << d.front() << ' ' << d.back() << '\\n';
+for (int x : d)
+    std::cout << x << ' '; // 1 20 3`,p:`Write a program that reads ten integers into a deque, then prints the size of the deque, the first element, the last element and their sum.`,s:`std::deque<int> d;
+int sum = 0;
+for (int i = 0; i < 10; ++i) {
+    int x;
+    std::cin >> x;
+    d.push_back(x);
+    sum += x;
+}
+std::cout << d.size() << ' ' << d.front() << ' '
+          << d.back() << ' ' << sum << '\\n';`},
+"5-3":{d:`std::map is an ordered associative container of key value pairs sorted by key, with logarithmic lookup, insertion and erase. Iterating it visits the keys in ascending order.`,c:`std::map<std::string, int> ages;
+ages["alice"] = 30;
+ages["bob"] = 25;
+for (const auto& [name, age] : ages)   // keys in sorted order
+    std::cout << name << " is " << age << '\\n';
+auto it = ages.find("bob");
+std::cout << (it != ages.end() ? it->second : -1) << '\\n';`,p:`Write a program that reads name and age pairs until end of input into a map, then prints each name and age in alphabetical order of the names.`,s:`std::map<std::string, int> m;
+std::string name;
+int age;
+while (std::cin >> name >> age)
+    m[name] = age;
+
+for (const auto& [n, a] : m)
+    std::cout << n << ' ' << a << '\\n';`},
+"5-4":{d:`std::unordered_map is a hash table of key value pairs with average constant time lookup but no ordering, so iteration order is unspecified. Use it when you only need fast lookup and never sorted iteration.`,c:`std::unordered_map<std::string, int> m{{"a", 1}, {"b", 2}};
+m["c"] = 3;
+std::cout << m["b"] << '\\n';       // 2
+std::cout << m.count("zz") << '\\n'; // 0
+m.erase("a");
+for (const auto& kv : m)            // order is unspecified
+    std::cout << kv.first << '=' << kv.second << ' ';`,p:`Write a program that reads word and count pairs from standard input into an unordered_map, then prints the total number of words and the count stored for the word "the".`,s:`std::unordered_map<std::string, int> m;
+std::string w;
+int c;
+while (std::cin >> w >> c)
+    m[w] = c;
+
+std::cout << m.size() << ' ' << m["the"] << '\\n';`},
+"5-5":{d:`std::set is an ordered container of unique keys kept sorted, with logarithmic insertion, removal and lookup. Inserting an element that is already present does nothing.`,c:`std::set<int> s{5, 1, 3};
+s.insert(3);              // already there, ignored
+s.insert(7);
+for (int x : s)
+    std::cout << x << ' '; // 1 3 5 7
+s.erase(5);
+std::cout << s.size() << '\\n';    // 3`,p:`Write a program that reads ten integers from standard input into a set and prints the number of distinct values, then prints the smallest and largest of them.`,s:`std::set<int> s;
+for (int i = 0; i < 10; ++i) {
+    int x;
+    std::cin >> x;
+    s.insert(x);
+}
+std::cout << s.size() << ' ' << *s.begin()
+          << ' ' << *s.rbegin() << '\\n';`},
+"5-6":{d:`std::unordered_set is a hash table of unique keys that gives average constant time insert, erase and lookup, but you cannot index it or iterate it in a defined order.`,c:`std::unordered_set<std::string> s{"apple", "pear"};
+s.insert("fig");
+s.insert("pear");            // ignored, already present
+
+std::cout << s.count("pear") << '\\n';  // 1
+std::cout << s.size() << '\\n';         // 3
+s.erase("apple");
+std::cout << s.count("apple") << '\\n'; // 0`,p:`Write a program that reads words from standard input until the word "end" and inserts them into an unordered_set, then prints the number of distinct words and whether "cat" is present.`,s:`std::unordered_set<std::string> s;
+std::string w;
+while (std::cin >> w && w != "end")
+    s.insert(w);
+
+std::cout << s.size() << ' ' << s.count("cat") << '\\n';`},
+"5-7":{d:`std::stack is a container adapter that gives last in first out access on top, with push, top and pop in constant time. It is a restricted interface over deque by default, not a container you can iterate.`,c:`std::stack<int> s;
+s.push(1);
+s.push(2);
+s.push(3);
+std::cout << s.top() << '\\n';   // 3
+s.pop();
+std::cout << s.top() << ' ' << s.size() << '\\n';  // 2 2`,p:`Write a program that pushes five integers read from standard input onto a stack and then prints them all in reverse order, popping one at a time.`,s:`std::stack<int> s;
+for (int i = 0; i < 5; ++i) {
+    int x;
+    std::cin >> x;
+    s.push(x);
+}
+while (!s.empty()) {
+    std::cout << s.top() << ' ';
+    s.pop();
+}
+std::cout << '\\n';`},
+"5-8":{d:`std::queue is an adapter that adds first in first out access to a container, exposing front, back, push and pop. It is built on a deque by default and is the natural choice for breadth first search.`,c:`std::queue<int> q;
+q.push(1);
+q.push(2);
+q.push(3);
+std::cout << q.front() << '\\n';  // 1
+std::cout << q.back() << '\\n';   // 3
+q.pop();                          // removes 1
+std::cout << q.size() << '\\n';   // 2`,p:`Write a program that reads integers from standard input into a queue until zero is entered, then prints how many items are queued and drains the queue printing each one.`,s:`std::queue<int> q;
+int x;
+while (std::cin >> x && x != 0)
+    q.push(x);
+
+std::cout << q.size() << '\\n';
+while (!q.empty()) {
+    std::cout << q.front() << ' ';
+    q.pop();
+}
+std::cout << '\\n';`},
+"5-9":{d:`std::pair holds exactly two values of possibly different types and std::tuple holds any number. Both support structured bindings in C++17, which name their members directly.`,c:`std::pair<int, std::string> p{1, "one"};
+auto [num, word] = p;
+std::cout << num << ' ' << word << '\\n';
+
+std::tuple<int, double, char> t{2, 2.5, 'b'};
+auto [a, b, c] = t;
+std::cout << a << ' ' << b << ' ' << c << '\\n';`,p:`Write a program that stores two ints 3 and 4 in a pair, stores the same two plus 7 in a tuple, then prints the sum from each using structured bindings.`,s:`std::pair<int, int> p{3, 4};
+auto [a, b] = p;
+std::cout << a + b << '\\n';
+
+std::tuple<int, int, int> t{3, 4, 7};
+auto [x, y, z] = t;
+std::cout << x + y + z << '\\n';`},
+"5-10":{d:`Containers nest by making the element type itself a container, such as a vector of vectors or a vector of maps. Each inner container owns its own storage and you access elements with a second [] or iterator.`,c:`std::vector<std::vector<int>> grid;
+for (int r = 0; r < 2; ++r)
+    grid.push_back({r * 10, r * 10 + 1});
+std::cout << grid[1][0] << '\\n';   // 10
+std::map<std::string, std::vector<int>> m;
+m["odds"] = {1, 3, 5};
+std::cout << m["odds"].size() << '\\n'; // 3`,p:`Write a program that reads three rows of two integers each into a vector of vectors and prints the sum of all six values read.`,s:`std::vector<std::vector<int>> grid(3, std::vector<int>(2));
+int sum = 0;
+for (int r = 0; r < 3; ++r)
+    for (int c = 0; c < 2; ++c) {
+        std::cin >> grid[r][c];
+        sum += grid[r][c];
+    }
+std::cout << sum << '\\n';`},
+"6-0":{d:`Standard containers expose iterators whose category determines which operations are valid: random access on vector and deque, bidirectional on list, and forward on set and map. Most algorithms only need forward or input iterators.`,c:`std::vector<int> v{10, 20, 30, 40};
+auto it = v.begin();
+std::cout << *(it + 2) << '\\n';   // 30, needs random access
+std::list<int> l{1, 2, 3};
+auto lit = l.begin();
+std::cout << *lit << '\\n';        // 1, list has no operator+
+++lit;                              // stepping is always allowed
+std::cout << *lit << '\\n';        // 2`,p:`Write a program that creates a vector and a list, then prints the second element of each by advancing an iterator with ++ from begin.`,s:`std::vector<int> v{1, 2, 3};
+auto vi = v.begin();
+++vi;
+std::cout << *vi << '\\n';   // 2
+
+std::list<int> l{4, 5, 6};
+auto li = l.begin();
+++li;
+std::cout << *li << '\\n';   // 5`},
+"6-1":{d:`A range based for loop iterates over every element of a container directly without naming iterators. Iterating by value gives a copy, while iterating by non const reference lets you modify the original elements.`,c:`std::vector<int> v{1, 2, 3};
+for (int x : v)          // x is a copy
+    std::cout << x << ' ';
+for (int& x : v)         // x is a reference
+    x *= 10;
+for (int x : v)
+    std::cout << x << ' ';   // 10 20 30`,p:`Write a program that reads four integers into a vector, doubles each one in place using a range based for loop with a reference, then prints the vector.`,s:`std::vector<int> v(4);
+for (int& x : v)
+    std::cin >> x;
+
+for (int& x : v)
+    x *= 2;
+
+for (int x : v)
+    std::cout << x << ' ';
+std::cout << '\\n';`},
+"6-2":{d:`std::sort rearranges a range in place in logarithmic time using a random access iterator. By default it sorts ascending, and you pass a comparator such as std::greater to reverse the order.`,c:`std::vector<int> v{5, 3, 9, 1};
+std::sort(v.begin(), v.end());
+for (int x : v)
+    std::cout << x << ' ';    // 1 3 5 9
+
+std::sort(v.begin(), v.end(), std::greater<int>());
+for (int x : v)
+    std::cout << x << ' ';    // 9 5 3 1`,p:`Write a program that reads six integers into a vector, sorts them in descending order and prints them separated by spaces.`,s:`std::vector<int> v(6);
+for (int& x : v)
+    std::cin >> x;
+
+std::sort(v.begin(), v.end(), std::greater<int>());
+for (std::size_t i = 0; i < v.size(); ++i)
+    std::cout << (i ? " " : "") << v[i];
+std::cout << '\\n';`},
+"6-3":{d:`std::find looks for a value in a range and std::find_if looks for the first element satisfying a predicate. Both return an iterator to the match or end, so you must compare against end() before using it.`,c:`std::vector<int> v{4, 7, 2, 9};
+auto it = std::find(v.begin(), v.end(), 7);
+std::cout << (it == v.end() ? -1 : *it) << '\\n';   // 7
+auto jt = std::find_if(v.begin(), v.end(),
+                       [](int x) { return x > 5; });
+std::cout << *jt << '\\n';                            // 7`,p:`Write a program that reads eight integers into a vector, then uses std::find_if to find the first value greater than 50 and prints it, or -1 if there is none.`,s:`std::vector<int> v(8);
+for (int& x : v)
+    std::cin >> x;
+
+auto it = std::find_if(v.begin(), v.end(),
+                       [](int x) { return x > 50; });
+std::cout << (it == v.end() ? -1 : *it) << '\\n';`},
+"6-4":{d:`std::count returns how many elements of a range equal a value, while std::count_if counts the elements that satisfy a predicate. Both take a pair of iterators and scan the range once.`,c:`std::vector<int> v{1, 2, 2, 3, 2, 5};
+
+std::cout << std::count(v.begin(), v.end(), 2) << '\\n';  // 3
+std::cout << std::count_if(v.begin(), v.end(),
+                           [](int x) { return x % 2 == 0; })
+          << '\\n';   // 3
+std::cout << std::count(v.begin(), v.end(), 9) << '\\n';  // 0`,p:`Write a program that reads ten integers into a vector, then uses std::count_if to print how many of them are greater than 100.`,s:`std::vector<int> v(10);
+for (int& x : v)
+    std::cin >> x;
+
+auto n = std::count_if(v.begin(), v.end(),
+                       [](int x) { return x > 100; });
+std::cout << n << '\\n';`},
+"6-5":{d:`std::accumulate folds a range into a single value using a binary operation, starting from an initial value. Summing needs the initial 0 and multiplying needs the initial 1.`,c:`std::vector<int> v{1, 2, 3, 4};
+
+int sum = std::accumulate(v.begin(), v.end(), 0);
+std::cout << sum << '\\n';   // 10
+
+int prod = std::accumulate(v.begin(), v.end(), 1,
+                           std::multiplies<int>());
+std::cout << prod << '\\n';  // 24`,p:`Write a program that reads seven integers into a vector and uses std::accumulate to print their sum and their product.`,s:`std::vector<int> v(7);
+for (int& x : v)
+    std::cin >> x;
+
+std::cout << std::accumulate(v.begin(), v.end(), 0) << ' '
+          << std::accumulate(v.begin(), v.end(), 1,
+                             std::multiplies<int>())
+          << '\\n';`},
+"6-6":{d:`std::transform applies a function to each element of a range and writes the results either back into the range or into a separate output range, such as one vector into another.`,c:`std::vector<int> v{1, 2, 3}, out(v.size());
+std::transform(v.begin(), v.end(), out.begin(),
+               [](int x) { return x * x; });
+for (int x : out)
+    std::cout << x << ' ';   // 1 4 9
+std::transform(v.begin(), v.end(), v.begin(),
+               [](int x) { return x + 10; });   // in place
+std::cout << v[0] << '\\n';   // 11`,p:`Write a program that reads six integers into a vector and uses std::transform into a second vector to store each value doubled, then prints the second vector.`,s:`std::vector<int> v(6), out(6);
+for (int& x : v)
+    std::cin >> x;
+
+std::transform(v.begin(), v.end(), out.begin(),
+               [](int x) { return x * 2; });
+for (int x : out)
+    std::cout << x << ' ';
+std::cout << '\\n';`},
+"6-7":{d:`std::remove_if does not erase anything, it moves the elements that fail the predicate to the front and returns a new logical end. You must call erase with that iterator and end to actually shrink the container.`,c:`std::vector<int> v{1, 2, 3, 4, 5, 6};
+
+auto e = std::remove_if(v.begin(), v.end(),
+                        [](int x) { return x % 2 == 0; });
+v.erase(e, v.end());          // this does the removal
+
+for (int x : v)
+    std::cout << x << ' ';    // 1 3 5`,p:`Write a program that reads eight integers into a vector, then uses std::remove_if with erase to drop every negative value and prints the remaining values.`,s:`std::vector<int> v(8);
+for (int& x : v)
+    std::cin >> x;
+
+auto e = std::remove_if(v.begin(), v.end(),
+                        [](int x) { return x < 0; });
+v.erase(e, v.end());
+
+for (int x : v)
+    std::cout << x << ' ';
+std::cout << '\\n';`},
+"6-8":{d:`Most hand written loops over containers have a standard algorithm that states the intent directly: sort, find, count, accumulate, transform or remove_if. Reaching for the algorithm is usually shorter, faster and clearer.`,c:`std::vector<int> v{3, 1, 4, 1, 5};
+std::sort(v.begin(), v.end());                     // ordering
+int total = std::accumulate(v.begin(), v.end(), 0);
+auto mi = std::min_element(v.begin(), v.end());
+auto dup = std::unique(v.begin(), v.end());
+v.erase(dup, v.end());                             // erase the tail
+std::cout << total << ' ' << *mi << ' ' << v.size() << '\\n';`,p:`Write a program that reads ten integers into a vector, then uses named standard algorithms to remove duplicates, sort the values and print the resulting size and the largest value.`,s:`std::vector<int> v(10);
+for (int& x : v)
+    std::cin >> x;
+
+v.erase(std::unique(v.begin(), v.end()), v.end());
+std::sort(v.begin(), v.end());
+std::cout << v.size() << ' ' << v.back() << '\\n';`},
+"7-0":{d:`std::string is a growable character sequence with built in methods such as size, length, substr, find, insert, erase and compare, plus overloads for concatenation and comparison.`,c:`std::string s = "Hello";
+s += ", world";
+std::cout << s << '\\n';
+std::cout << s.size() << '\\n';        // 12
+std::cout << s.substr(0, 5) << '\\n';  // Hello
+std::cout << s.find("world") << '\\n'; // 7
+std::cout << (s == "Hello, world") << '\\n';`,p:`Write a program that reads a full line into a string and prints its length, the number of spaces in it and the first five characters.`,s:`std::string s;
+std::getline(std::cin, s);
+
+std::cout << s.size() << ' '
+          << std::count(s.begin(), s.end(), ' ') << ' '
+          << s.substr(0, 5) << '\\n';`},
+"7-1":{d:`std::string_view is a non owning view over characters that avoids copying, which makes it a cheap function parameter for read only string slices. It must not outlive the string it points at.`,c:`std::string s = "Hello, world";
+std::string_view v(s);
+std::cout << v.size() << '\\n';        // 12
+std::cout << v.substr(0, 5) << '\\n';  // Hello
+std::cout << v.find("world") << '\\n';  // 7
+
+v.remove_prefix(7);          // view now starts at world
+std::cout << v << '\\n';`,p:`Write a function taking a string_view that returns the number of vowels in it, then call it with the line read from standard input and print the result.`,s:`int countVowels(std::string_view v) {
+    int n = 0;
+    for (char c : v)
+        if (c == 'a' || c == 'e' || c == 'i' ||
+            c == 'o' || c == 'u')
+            ++n;
+    return n;
+}
+
+std::string line;
+std::getline(std::cin, line);
+std::cout << countVowels(line) << '\\n';`},
+"7-2":{d:`The iostream streams cin, cout, cerr and clog are the standard input and output objects, and they support chaining because the stream operators return a reference to the stream. cin skips leading whitespace while reading, and cerr is unbuffered for errors.`,c:`std::cout << "Name: ";
+std::string name;
+int a, b;
+std::cin >> name >> a >> b;   // reads skip leading whitespace
+std::cout << "Hello, " << name << '\\n';
+std::cerr << "got " << a << " and " << b << '\\n';   // unbuffered`,p:`Write a program that reads two integers and a word from standard input, then prints their sum, their product and the word in upper case.`,s:`#include <iostream>
+#include <string>
+
+int a, b;
+std::string w;
+std::cin >> a >> b >> w;
+std::cout << a + b << ' ' << a * b << ' ';
+for (char& c : w)
+    c = static_cast<char>(std::toupper(c));
+std::cout << w << '\\n';`},
+"7-3":{d:`Formatted extraction with operator>> stops at whitespace, so to read a whole line including spaces you use std::getline. It is often needed right after a >> to pick up the rest of the line.`,c:`int id;
+std::cin >> id;
+std::cin.ignore();           // drop the rest of that line
+std::string line;
+std::getline(std::cin, line);   // spaces included
+std::cout << line.size() << '\\n';
+std::getline(std::cin, line);   // the next full line
+std::cout << line << '\\n';`,p:`Write a program that reads a count n and then n lines of text, printing each line followed by the number of characters it contains.`,s:`int n;
+std::cin >> n;
+std::cin.ignore();
+
+for (int i = 0; i < n; ++i) {
+    std::string line;
+    std::getline(std::cin, line);
+    std::cout << line << ' ' << line.size() << '\\n';
+}`},
+"7-4":{d:`std::ifstream is an input file stream that behaves like cin, so you can read lines or tokens from a text file with it. Always check the stream after opening to catch a missing or unreadable file.`,c:`std::ifstream in("data.txt");
+if (!in)
+    return 1;                // check the stream after opening
+std::string line;
+while (std::getline(in, line))
+    std::cout << line << '\\n';`,p:`Write a program that reads all the integers from a file named nums.txt and prints their sum, printing -1 if the file cannot be opened.`,s:`#include <fstream>
+
+std::ifstream in("nums.txt");
+if (!in) {
+    std::cout << -1 << '\\n';
+    return 0;
+}
+int x, sum = 0;
+while (in >> x)
+    sum += x;
+std::cout << sum << '\\n';`},
+"7-5":{d:`std::ofstream is an output file stream that writes to a file just like cout, and it truncates an existing file when opened. Pass std::ios::app to append instead of overwriting, and check the stream after opening.`,c:`std::ofstream out("log.txt");     // creates or truncates
+if (!out)
+    return 1;
+out << "first line" << '\\n';
+out.close();
+std::ofstream app("log.txt", std::ios::app);   // append
+app << "second line" << '\\n';`,p:`Write a program that writes the numbers 1 through 5, each on its own line, into a file named out.txt, then appends the line "done" to the same file.`,s:`#include <fstream>
+
+std::ofstream out("out.txt");
+if (!out)
+    return 1;
+for (int i = 1; i <= 5; ++i)
+    out << i << '\\n';
+out.close();
+
+std::ofstream app("out.txt", std::ios::app);
+app << "done" << '\\n';`},
+"7-6":{d:`The stream manipulators and the put/get members build text piece by piece without formatting it by hand. std::setw sets a field width for the next output, and iomanip also provides setfill, fixed, setprecision and left.`,c:`#include <iomanip>
+#include <iostream>
+
+std::cout << std::setw(5) << 42 << '\\n';
+std::cout << std::setfill('0') << std::setw(4) << 42 << '\\n';
+std::cout << std::fixed << std::setprecision(2) << 3.14159 << '\\n';
+std::cout << std::setw(6) << std::setfill(' ') << 42 << '\\n';`,p:`Write a program that prints a table header "id" and "score" with std::setw and then prints the id 7 and score 92.5 with setprecision(1) and fixed.`,s:`#include <iomanip>
+#include <iostream>
+
+std::cout << std::setw(6) << "id" << std::setw(10) << "score" << '\\n';
+double score = 92.5;
+std::cout << std::setw(6) << 7
+          << std::setw(10) << std::fixed << std::setprecision(1)
+          << score << '\\n';`},
+"7-7":{d:`std::regex matches strings against an ECMAScript regular expression pattern, and std::regex_search finds a match anywhere while std::regex_match requires the whole string to match. Results are read out of an std::smatch or std::cmatch object.`,c:`std::regex digits("[[:digit:]]+");
+std::string text = "ab 12 cd 345";
+std::smatch m;
+while (std::regex_search(text, m, digits)) {
+    std::cout << m[0] << '\\n';    // 12 then 345
+    text = m.suffix().str();       // keep going
+}`,p:`Write a program that reads a line from standard input and uses std::regex to print every word in it that starts with a capital letter, one per line.`,s:`#include <regex>
+#include <string>
+
+std::regex re("[[:upper:]][[:lower:]]+");
+std::string line;
+std::getline(std::cin, line);
+
+for (std::sregex_iterator it(line.begin(), line.end(), re), end;
+     it != end; ++it)
+    std::cout << it->str() << '\\n';`}
+};
+var RDM_CPP3={
+"8-0":{d:`Exceptions let a function report failure by throwing an object that unwinds the call stack until some caller catches it, which beats error codes when the caller is far away.`,c:`#include <stdexcept>
+int parse(const std::string& s) {
+    if (s.empty()) throw std::invalid_argument("empty");
+    return std::stoi(s);
+}`,p:`Write a function int head(const std::vector<int>& v) that throws std::out_of_range if the vector is empty and otherwise returns the first element, then print head on a vector with one value 7.`,s:`#include <stdexcept>
+#include <iostream>
+#include <vector>
+int head(const std::vector<int>& v) {
+    if (v.empty()) throw std::out_of_range("empty");
+    return v.front();
+}
+int main() {
+    std::cout << head({7}) << std::endl;
+}`},
+"8-1":{d:`The throw expression creates an exception object and transfers control to the nearest matching handler, abandoning the rest of the current function.`,c:`void check(bool ok) {
+    if (!ok) throw 42;
+}
+int main() {
+    check(false);   // aborts the call
+}`,p:`Write a void setAge(int age) that throws the string literal "bad age" when age is negative, and does nothing otherwise.`,s:`#include <iostream>
+void setAge(int age) {
+    if (age < 0) throw "bad age";
+    std::cout << "set to " << age << std::endl;
+}
+int main() {
+    setAge(-1);
+}`},
+"8-2":{d:`A try block encloses the code that might throw and each catch clause matches the thrown type, so handlers run only when an error actually happens.`,c:`try {
+    int n = 5 / 0;
+} catch (const std::exception& e) {
+    std::cout << e.what();
+}`,p:`Write a program that divides two ints read from input inside a try block and prints "undefined" from the catch block if the divisor is 0, or the quotient otherwise.`,s:`#include <iostream>
+int main() {
+    int a = 9, b = 0;
+    try {
+        if (b == 0) throw std::runtime_error("zero");
+        std::cout << a / b << std::endl;
+    } catch (const std::exception& e) {
+        std::cout << "undefined" << std::endl;
+    }
+}`},
+"8-3":{d:`Inside a catch block a bare throw with no operand rethrows the exception currently being handled, which is how a layer can log it and pass it upward unchanged.`,c:`try {
+    risky();
+} catch (const std::exception& e) {
+    log(e.what());
+    throw;              // pass it on
+}`,p:`Write a void run() that throws std::runtime_error("deep") inside a try block, and in the catch block prints "caught" and then rethrows with a bare throw.`,s:`#include <iostream>
+#include <stdexcept>
+void run() {
+    try {
+        throw std::runtime_error("deep");
+    } catch (const std::exception& e) {
+        std::cout << "caught " << e.what() << std::endl;
+        throw;
+    }
+}
+int main() {
+    try { run(); } catch (...) { std::cout << "done" << std::endl; }
+}`},
+"8-4":{d:`You can throw any type, so deriving a class from std::runtime_error or std::logic_error gives your exceptions a name, a what message and automatic catching as std::exception.`,c:`class ConfigError : public std::runtime_error {
+public:
+    explicit ConfigError(const std::string& k)
+        : std::runtime_error("missing " + k) {}
+};
+throw ConfigError("api_key");`,p:`Define a class RangeError that derives from std::out_of_range, takes a low and high value in its constructor, and is thrown with a message saying the value was out of the given range.`,s:`#include <stdexcept>
+class RangeError : public std::out_of_range {
+public:
+    RangeError(int lo, int hi)
+        : std::out_of_range("not in [" + std::to_string(lo) +
+                            ", " + std::to_string(hi) + "]") {}
+};
+throw RangeError(0, 10);`},
+"8-5":{d:`Marking a function noexcept promises it will never let an exception escape; if one does the program calls std::terminate, so the compiler is free to skip unwind bookkeeping.`,c:`int safeDiv(int a, int b) noexcept {
+    if (b == 0) return 0;   // must not throw
+    return a / b;
+}`,p:`Write a function bool allPositive(const std::vector<int>& v) marked noexcept that returns false immediately on a negative element and true at the end, without throwing anything.`,s:`#include <vector>
+bool allPositive(const std::vector<int>& v) noexcept {
+    for (int x : v) {
+        if (x < 0) return false;
+    }
+    return true;
+}`},
+"8-6":{d:`Exception safety means a function leaves its object in a valid state even if something throws; the basic guarantee avoids leaks, the strong guarantee is all or nothing, and noexcept is the trivial case.`,c:`void add(vector<int>& v) {
+    v.push_back(1);      // basic: no leak, maybe grown
+}`,p:`Implement a function void popBack(std::vector<int>& v) that erases the last element only when the vector is non-empty, so it never throws and never leaves the vector in a bad state.`,s:`#include <vector>
+void popBack(std::vector<int>& v) noexcept {
+    if (v.empty()) return;
+    v.pop_back();
+}`},
+"8-7":{d:`The assert macro aborts with a message when its condition is false and compiles away entirely when NDEBUG is defined, so it is for catching programmer bugs, not user input errors.`,c:`#include <cassert>
+int main() {
+    int n = 5;
+    assert(n > 0 && "n must be positive");
+}`,p:`Write a program that reads an int and asserts that it is between 0 and 100, printing the value when the assertion holds.`,s:`#include <cassert>
+#include <iostream>
+int main() {
+    int n = 42;
+    assert(n >= 0 && n <= 100 && "out of range");
+    std::cout << n << std::endl;
+}`},
+"9-0":{d:`A function template is a blueprint that the compiler instantiates for each distinct argument type used, giving type-safe generics for free.`,c:`template <typename T>
+T maxOf(T a, T b) {
+    return a < b ? b : a;
+}
+maxOf(3, 7);      // int
+maxOf(1.5, 0.5);  // double`,p:`Write a template function T maxOf(T a, T b) that returns the larger argument and print maxOf(7, 3), which should output 7.`,s:`#include <iostream>
+template <typename T>
+T maxOf(T a, T b) {
+    return a < b ? b : a;
+}
+int main() {
+    std::cout << maxOf(7, 3) << std::endl;
+}`},
+"9-1":{d:`A class template makes a whole family of classes from one definition, and the compiler generates a separate class for each type argument you supply.`,c:`template <typename T>
+class Box {
+public:
+    Box(T v) : value(v) {}
+    T get() const { return value; }
+private:
+    T value;
+};`,p:`Define a class template Stack<T> holding a std::vector<T> with a push method and a size method, then push 1 and 2 into a Stack<int> and print its size.`,s:`#include <iostream>
+#include <vector>
+template <typename T>
+class Stack {
+public:
+    void push(T v) { items.push_back(v); }
+    size_t size() const { return items.size(); }
+private:
+    std::vector<T> items;
+};
+int main() {
+    Stack<int> s;
+    s.push(1); s.push(2);
+    std::cout << s.size() << std::endl;
+}`},
+"9-2":{d:`Template specialization replaces the generic body for one specific type, which is how you give a sensible meaning to a template that would otherwise be wrong for that argument.`,c:`template <typename T>
+void print(T) { std::cout << "generic" << std::endl; }
+
+template <>
+void print<bool>(bool) { std::cout << "bool" << std::endl; }`,p:`Write a template function name<T>(T) that prints "generic", then specialize it for bool so it prints "bool", and call it with true.`,s:`#include <iostream>
+template <typename T>
+void name(T) { std::cout << "generic" << std::endl; }
+template <>
+void name<bool>(bool) { std::cout << "bool" << std::endl; }
+int main() { name(true); }`},
+"9-3":{d:`A parameter pack using T&&... accepts any number of arguments of mixed types, and the pack expands with a pattern that can also fold into a single expression.`,c:`template <typename... Args>
+int count(Args... args) {
+    return sizeof...(args);
+}
+count(1, 2.0, "x");  // 3`,p:`Write a template function int sum(int...) that adds all its arguments using a fold expression and prints sum(1, 2, 3), which should output 6.`,s:`#include <iostream>
+template <typename... Args>
+int sum(Args... args) {
+    return (args + ... + 0);
+}
+int main() {
+    std::cout << sum(1, 2, 3) << std::endl;
+}`},
+"9-4":{d:`A constexpr function can be evaluated at compile time as well as at run time, which is what allows arguments to be used in template parameters, array sizes and static_assert.`,c:`constexpr int square(int n) {
+    return n * n;
+}
+int arr[square(3)];  // size 9
+static_assert(square(2) == 4);`,p:`Write a constexpr function int fact(int n) returning the factorial of n and print fact(5), which should output 120.`,s:`#include <iostream>
+constexpr int fact(int n) {
+    return n <= 1 ? 1 : n * fact(n - 1);
+}
+int main() {
+    std::cout << fact(5) << std::endl;
+}`},
+"9-5":{d:`Type traits in the standard library answer questions about a type at compile time, such as is_integral, is_pointer or remove_reference, and the compiler picks the right branch from those answers.`,c:`#include <type_traits>
+static_assert(std::is_integral<int>::value);
+static_assert(!std::is_integral<double>::value);
+std::is_integral<double>::value ? 1 : 0;`,p:`Write a program that uses static_assert to confirm std::is_pointer<int*> is true and std::is_pointer<int> is false, then print "ok".`,s:`#include <iostream>
+#include <type_traits>
+int main() {
+    static_assert(std::is_pointer<int*>::value);
+    static_assert(!std::is_pointer<int>::value);
+    std::cout << "ok" << std::endl;
+}`},
+"9-6":{d:`Substitution failure in the immediate context removes a candidate overload instead of causing a hard error, which is how a template can provide a fallback only when another signature does not match.`,c:`template <typename T>
+auto print(T t) -> decltype(std::cout << t) {
+    return std::cout << t;
+}`,p:`Write a template function print(T t) using a trailing return type of decltype(std::cout << t) so it only accepts types that can be streamed, and call it with an int.`,s:`#include <iostream>
+template <typename T>
+auto print(T t) -> decltype(std::cout << t) {
+    return std::cout << t << std::endl;
+}
+int main() { print(42); }`},
+"9-7":{d:`The curiously recurring template pattern makes a base class depend on its own derived type, which gives static polymorphism with no virtual functions and no runtime cost.`,c:`template <typename D>
+struct Base {
+    void run() { static_cast<D*>(this)->step(); }
+};
+struct App : Base<App> {
+    void step() { /* work */ }
+};`,p:`Define template <typename D> struct Name that prints "base", and struct Hello deriving from Name<Hello> that prints "hello" in its step method, then print Hello().`,s:`#include <iostream>
+template <typename D>
+struct Name {
+    void print() { static_cast<D*>(this)->step(); }
+};
+struct Hello : Name<Hello> {
+    void step() { std::cout << "hello" << std::endl; }
+};
+int main() { Hello h; h.print(); }`},
+"10-0":{d:`std::thread runs a callable on its own thread of execution, and the program must join or detach before it exits or the process terminates abruptly.`,c:`#include <thread>
+std::thread t([]{ std::cout << "work" << std::endl; });
+t.join();   // wait for it`,p:`Write a program that starts a std::thread running a lambda that prints "hello", then joins the thread and prints "main" after it.`,s:`#include <iostream>
+#include <thread>
+int main() {
+    std::thread t([]{ std::cout << "hello" << std::endl; });
+    t.join();
+    std::cout << "main" << std::endl;
+}`},
+"10-1":{d:`A std::mutex is a mutual exclusion lock: one thread at a time may hold it, so any shared state guarded by a lock and lock_guard avoids data races.`,c:`std::mutex m;
+{
+    std::lock_guard<std::mutex> lock(m);
+    counter++;   // protected
+}`,p:`Write a function addTen(std::mutex& m, int& counter) that locks the mutex, adds 10 to counter, and unlocks, then call it once and print the counter.`,s:`#include <iostream>
+#include <mutex>
+void addTen(std::mutex& m, int& counter) {
+    std::lock_guard<std::mutex> lock(m);
+    counter += 10;
+}
+int main() {
+    std::mutex m; int c = 0;
+    addTen(m, c);
+    std::cout << c << std::endl;
+}`},
+"10-2":{d:`std::lock_guard is a scoped RAII lock that releases on every exit path, while std::unique_lock is movable and can be unlocked early, deferred or used with condition variables.`,c:`std::unique_lock<std::mutex> lock(m);
+lock.unlock();
+lock.lock();
+lock.unlock();   // optional with RAII`,p:`Write a function withLock(std::mutex& m, int& x) that takes a std::lock_guard on the mutex and sets x to 99, then print x after calling it.`,s:`#include <iostream>
+#include <mutex>
+void withLock(std::mutex& m, int& x) {
+    std::lock_guard<std::mutex> lock(m);
+    x = 99;
+}
+int main() {
+    std::mutex m; int x = 0;
+    withLock(m, x);
+    std::cout << x << std::endl;
+}`},
+"10-3":{d:`A condition variable lets a thread sleep until another thread changes the state it cares about, and it must always be used with the same mutex that protects that state.`,c:`std::unique_lock<std::mutex> lock(m);
+cv.wait(lock, []{ return ready; });
+use(queue);`,p:`Write a small class Box with a mutex, a condition_variable and a bool flag, exposing a waitUntilSet method that blocks with cv.wait until the flag becomes true.`,s:`#include <condition_variable>
+#include <mutex>
+class Box {
+public:
+    void set() {
+        std::lock_guard<std::mutex> lock(m);
+        ready = true;
+        cv.notify_all();
+    }
+    void waitUntilSet() {
+        std::unique_lock<std::mutex> lock(m);
+        cv.wait(lock, [this]{ return ready; });
+    }
+private:
+    std::mutex m;
+    std::condition_variable cv;
+    bool ready = false;
+};`},
+"10-4":{d:`std::atomic wraps a value so reads and writes are indivisible and cannot be torn or reordered, giving thread safety for counters and flags without a mutex.`,c:`std::atomic<int> hits{0};
+hits.fetch_add(1);
+int seen = hits.load();`,p:`Write a program that declares a std::atomic<int> counter starting at 0, increments it three times with fetch_add and prints its load value, which should be 3.`,s:`#include <atomic>
+#include <iostream>
+int main() {
+    std::atomic<int> counter{0};
+    counter.fetch_add(1);
+    counter.fetch_add(1);
+    counter.fetch_add(1);
+    std::cout << counter.load() << std::endl;
+}`},
+"10-5":{d:`std::async launches a task and returns a std::future that holds the result; get blocks until the task finishes and then hands back the value or rethrows the exception.`,c:`auto fut = std::async(std::launch::async, []{
+    return 6 * 7;
+});
+int r = fut.get();   // 42`,p:`Write a program that runs a lambda returning the square of 9 with std::async and prints the value obtained from future.get, which should be 81.`,s:`#include <future>
+#include <iostream>
+int main() {
+    auto fut = std::async(std::launch::async, []{
+        return 9 * 9;
+    });
+    std::cout << fut.get() << std::endl;
+}`},
+"10-6":{d:`A thread pool keeps a fixed set of worker threads blocked on a task queue, so a program submits many small jobs without paying the cost of creating a thread for each one.`,c:`pool.submit([]{ return 1; });
+// workers pop and run queued tasks
+auto fut = pool.submit([]{ return 42; });
+fut.get();`,p:`Write a function void runTwice(const std::function<void()>& job) that calls job two times in a row, mimicking the simple serial core of a pool, and use it to print "a".`,s:`#include <functional>
+#include <iostream>
+void runTwice(const std::function<void()>& job) {
+    job();
+    job();
+}
+int main() {
+    runTwice([]{ std::cout << "a" << std::endl; });
+}`},
+"10-7":{d:`A data race is undefined behaviour when two threads touch the same memory without synchronization, while a deadlock is when threads each wait on a lock the other already holds and nothing can proceed.`,c:`std::lock_guard<std::mutex> a(m1);
+std::lock_guard<std::mutex> b(m2);
+// same order everywhere avoids deadlock`,p:`Write two functions lockBoth(std::mutex&, std::mutex&, int&) and lockBothRev(std::mutex&, std::mutex&, int&) that acquire their two mutexes in opposite orders, demonstrating the deadlock pattern.`,s:`#include <mutex>
+void lockBoth(std::mutex& a, std::mutex& b, int& n) {
+    std::lock_guard<std::mutex> la(a);
+    std::lock_guard<std::mutex> lb(b);
+    ++n;
+}
+void lockBothRev(std::mutex& a, std::mutex& b, int& n) {
+    std::lock_guard<std::mutex> lb(b);
+    std::lock_guard<std::mutex> la(a);
+    ++n;
+}`},
+"11-0":{d:`auto asks the compiler to deduce a variable's type from its initializer, so you write the value rather than repeating a long type name.`,c:`auto n = 42;        // int
+auto pi = 3.14;     // double
+std::vector<int> v{1, 2};
+auto it = v.begin();  // std::vector<int>::iterator`,p:`Write a program that declares auto x = 10, auto y = 2.5 and auto name = "hi", then prints each value followed by a space and a newline.`,s:`#include <iostream>
+#include <string>
+int main() {
+    auto x = 10;
+    auto y = 2.5;
+    auto name = std::string("hi");
+    std::cout << x << " " << y << " " << name << std::endl;
+}`},
+"11-1":{d:`A move constructor and move assignment steal the heap storage from a source object instead of copying it, making ownership transfer cheap while leaving the source in a valid empty state.`,c:`std::string a = "hello";
+std::string b = std::move(a);  // a is empty now
+std::cout << b << "\\n";`,p:`Write a function void use(std::string s) that prints s, and call it with use(std::move(name)) where name is a std::string set to "data", demonstrating that name is left empty.`,s:`#include <iostream>
+#include <string>
+#include <utility>
+void use(std::string s) {
+    std::cout << s << std::endl;
+}
+int main() {
+    std::string name = "data";
+    use(std::move(name));
+    std::cout << "[" << name << "]" << std::endl;
+}`},
+"11-2":{d:`Rule of zero says a class does not need a destructor, copy operations or move operations at all when it only owns members that manage themselves, which is the simplest and safest design.`,c:`class Engine {
+public:
+    explicit Engine(int v) : vol(v) {}
+private:
+    int vol;
+};
+// no ~Engine, no copies, no moves needed`,p:`Write a class Report holding only a std::string that needs no destructor, copy or move members because it only owns a std::string, and print its title.`,s:`#include <iostream>
+#include <string>
+class Report {
+public:
+    explicit Report(std::string t) : title(std::move(t)) {}
+    std::string title;
+};
+int main() {
+    Report r("monthly");
+    std::cout << r.title << std::endl;
+}`},
+"11-3":{d:`Because defining any of a destructor, copy constructor, copy assignment, move constructor or move assignment suppresses the others, you must declare all five explicitly to keep the type predictable.`,c:`Buffer(const Buffer&) = delete;
+Buffer& operator=(const Buffer&) = delete;
+Buffer(Buffer&&) = default;
+Buffer& operator=(Buffer&&) = default;
+~Buffer() = default;`,p:`Write a class Buffer that deletes its copy constructor and copy assignment, defaults its move constructor, move assignment and destructor, and create one with Buffer b(10).`,s:`class Buffer {
+public:
+    explicit Buffer(int n) : size(n) {}
+    Buffer(const Buffer&) = delete;
+    Buffer& operator=(const Buffer&) = delete;
+    Buffer(Buffer&&) = default;
+    Buffer& operator=(Buffer&&) = default;
+    ~Buffer() = default;
+private:
+    int size;
+};
+int main() { Buffer b(10); }`},
+"11-4":{d:`if constexpr discards the branch whose condition is not satisfied at compile time, so the code inside it is never instantiated and cannot fail to compile for types it does not handle.`,c:`template <typename T>
+void show(T v) {
+    if constexpr (std::is_integral_v<T>)
+        std::cout << v + 1;
+    else
+        std::cout << v;
+}`,p:`Write a template function show(T v) that uses if constexpr to print v + 1 for integral types and v for floating point types, then call show with an int 4 and a double 4.0.`,s:`#include <iostream>
+#include <type_traits>
+template <typename T>
+void show(T v) {
+    if constexpr (std::is_integral_v<T>)
+        std::cout << v + 1 << std::endl;
+    else
+        std::cout << v << std::endl;
+}
+int main() { show(4); show(4.0); }`},
+"11-5":{d:`nullptr is the typed null pointer constant introduced in C++11; unlike the macro NULL or the literal 0 it converts only to pointers, which removes overload ambiguity.`,c:`int* p = nullptr;
+if (p == nullptr) {
+    p = new int(5);
+}
+delete p;`,p:`Write a function void check(int* p) that prints "null" when p == nullptr and "value" with the pointed-to number otherwise, and call check(nullptr) then check(new int(5)).`,s:`#include <iostream>
+void check(int* p) {
+    if (p == nullptr)
+        std::cout << "null" << std::endl;
+    else
+        std::cout << "value " << *p << std::endl;
+}
+int main() {
+    check(nullptr);
+    int x = 5;
+    check(&x);
+}`},
+"11-6":{d:`A const-qualified function promises not to modify the object, const parameters stop the callee from changing them, and const return values such as std::string prevent accidental edits of temporary results.`,c:`class Counter {
+public:
+    int get() const { return n; }   // read-only
+private:
+    int n = 0;
+};`,p:`Write a class Counter with an int n, a method void add(int) that increments n and a method int get() const that returns n without modifying it.`,s:`class Counter {
+public:
+    void add(int v) { n += v; }
+    int get() const { return n; }
+private:
+    int n = 0;
+};`},
+"11-7":{d:`Structured bindings let a single declaration unpack a tuple, pair or map entry into named variables, with the names usable directly in range-based for loops.`,c:`auto [key, value] = entry;   // pair
+for (const auto& [k, v] : m)
+    use(k, v);`,p:`Write a program that creates a std::map<int, string> with one entry 1 mapped to "one", then uses a structured binding in a range-based for to print "1 one".`,s:`#include <iostream>
+#include <map>
+#include <string>
+int main() {
+    std::map<int, std::string> m{{1, "one"}};
+    for (const auto& [k, v] : m)
+        std::cout << k << " " << v << std::endl;
+}`}
+};
+var RDM_PY1={
+"0-0":{d:`Comments start with a hash sign and run to the end of the line, and they are ignored by the interpreter. A docstring is a triple-quoted string placed as the first statement of a module, class or function, and it is kept in the __doc__ attribute so tools can read it.`,c:`# this is a comment
+def area(radius):
+    """Return the area of a circle."""
+    return 3.14159 * radius * radius
+
+print(area(2).__doc__)`,p:`Define a function fib(n) whose docstring says "Return the nth Fibonacci number" and print fib.__doc__ to show it.`,s:`def fib(n):
+    """Return the nth Fibonacci number."""
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+print(fib.__doc__)`},
+"0-1":{d:`Python variables are created by assignment with no type keyword, and a name is just a label bound to an object. Names are case sensitive and the convention is snake_case for variables and functions and PascalCase for classes.`,c:`user_name = "Ada"
+age = 36
+PI = 3.14159
+Total = 1
+
+print(user_name, age, Total)`,p:`Store the product name in item, its price in unit_price and how many were bought in quantity, then print the line "Total: 59.94" where the total has two decimals.`,s:`item = "Notebook"
+unit_price = 9.99
+quantity = 6
+total = unit_price * quantity
+print("Total: " + format(total, ".2f"))`},
+"0-2":{d:`Python ships with the built-in types int, float, str, bool, list, tuple, dict and set, and no declaration is needed because the type is tracked by the value itself. The type() function reports what an object actually is.`,c:`values = [42, 3.5, "hi", True, [1], (2,), {"a": 1}, {1, 2}]
+
+for v in values:
+    print(type(v).__name__, v)`,p:`Given the list [1, 2.5, "x", None], print how many items are of type int and how many are of type float, separated by a space.`,s:`items = [1, 2.5, "x", None]
+ints = sum(1 for i in items if type(i) is int)
+floats = sum(1 for i in items if type(i) is float)
+print(ints, floats)`},
+"0-3":{d:`Python has arithmetic operators such as // for floor division and ** for power, comparison operators that return booleans, and logical operators and, or and not that short-circuit. Membership tests use in and not in on any container.`,c:`a = 17
+b = 5
+
+print(a // b, a % b, a / b, a ** b)
+print(a > b and b < 10, not (a == b))
+print(5 in [1, 5], "py" in "python")`,p:`Given n = 17, print on one line whether n is divisible by both 3 and 5 using a single boolean expression.`,s:`n = 17
+print(n % 3 == 0 and n % 5 == 0)`},
+"0-4":{d:`The functions int, float, str and bool convert values between the basic types, and conversion of something impossible raises an exception rather than failing silently. Because input() always returns a string, numeric input is the most common place conversion is needed.`,c:`print(int("42") + 1)
+print(float("3.5") * 2)
+print(str(10) + " apples")
+print(bool(0), bool([1]))`,p:`Given the string values "12" and "8", print their sum as an integer and then print their quotient with exactly two decimals.`,s:`a = "12"
+b = "8"
+print(int(a) + int(b))
+print(f"{int(a) / int(b):.2f}")`},
+"0-5":{d:`A string is an immutable sequence of Unicode characters, so methods like upper return new strings instead of changing the old one. Indexing starts at 0, negative indices count from the end, and len gives the number of characters.`,c:`s = "Python"
+
+print(s[0], s[-1], len(s))
+print(s.upper(), s[1:4], s + "!")
+
+words = ["ab", "cd"]
+print("".join(words))`,p:`Given the string "Programming", print its length on the first line and its first three characters in uppercase on the second line.`,s:`s = "Programming"
+print(len(s))
+print(s[:3].upper())`},
+"0-6":{d:`An f-string is a normal string prefixed with f, and curly braces inside it hold expressions that are converted with str. A format specifier after a colon controls precision, width and alignment, such as .2f for two decimals.`,c:`name = "Ada"
+score = 0.876
+
+print(f"{name} scored {score:.1%}")
+print(f"{name:<8}|{score:>8.3f}")
+print(f"next year: {2026 + 1}")`,p:`Given price = 1234.5, use an f-string to print exactly the text "Price: 1234.50".`,s:`price = 1234.5
+print(f"Price: {price:.2f}")`},
+"0-7":{d:`The print function writes text to standard output while input reads one line from standard input. input always returns a string, so wrap it in int or float when a number is expected.`,c:`name = input("Name: ")
+age = int(input("Age: "))
+
+print("Hello,", name)
+print("Next birthday age:", age + 1)`,p:`Read two integers from standard input, one per line, and print their sum on a single line.`,s:`a = int(input())
+b = int(input())
+print(a + b)`},
+"0-8":{d:`if, elif and else pick the first branch whose condition is true, and the chain stops there. Blocks are defined by indentation rather than braces, and the else branch is optional.`,c:`n = 15
+
+if n < 0:
+    print("negative")
+elif n < 10:
+    print("small")
+else:
+    print("big")`,p:`Given an integer n, print FizzBuzz when it is divisible by both 3 and 5, Fizz when only divisible by 3, Buzz when only divisible by 5 and n itself otherwise.`,s:`n = 15
+if n % 15 == 0:
+    print("FizzBuzz")
+elif n % 3 == 0:
+    print("Fizz")
+elif n % 5 == 0:
+    print("Buzz")
+else:
+    print(n)`},
+"0-9":{d:`A for loop walks the items of any iterable, while range gives a counted sequence of integers. A while loop repeats as long as its condition holds, and break leaves the loop while continue skips to the next iteration.`,c:`for i in range(1, 6):
+    if i == 3:
+        continue
+    print(i)
+
+n = 0
+while n < 3:
+    n += 1`,p:`Print the squares of the numbers from 1 to 5 inclusive, one per line, using a for loop.`,s:`for i in range(1, 6):
+    print(i * i)`},
+"0-10":{d:`A list is an ordered and mutable sequence that can hold items of any type. append adds to the end, insert places an item at a position, remove deletes by value and sort rearranges in place.`,c:`nums = [3, 1, 4]
+nums.append(5)
+nums.insert(0, 0)
+nums.remove(4)
+nums.sort()
+
+print(nums, len(nums), nums[-1])`,p:`Given the list [4, 2, 9, 2], print the same list with duplicates removed while keeping the original order.`,s:`nums = [4, 2, 9, 2]
+seen = []
+for n in nums:
+    if n not in seen:
+        seen.append(n)
+print(seen)`},
+"1-0":{d:`A tuple is an ordered sequence that cannot be modified after creation, which makes it hashable and safe to use as a dictionary key. Tuple items are read by index and can be unpacked into several names at once.`,c:`point = (3, 4)
+x, y = point
+
+print(x + y, len(point), point[0], point[-1])
+print((1, 2) + (3,))`,p:`Given the tuple t = (10, 20, 30, 40, 50), print its first and last elements on one line and the sum of all its elements on the next line.`,s:`t = (10, 20, 30, 40, 50)
+print(t[0], t[-1])
+print(sum(t))`},
+"1-1":{d:`A set is an unordered collection of unique hashable items, so duplicates collapse automatically. Membership tests and the operations union, intersection and difference run in roughly constant time regardless of size.`,c:`a = {1, 2, 3}
+b = {2, 3, 4}
+
+print(a | b, a & b, a - b, 5 in a)
+s = {1, 1, 2}
+print(s)`,p:`Given the lists x = [1, 2, 3, 4] and y = [3, 4, 5], print the sorted list of values that appear in exactly one of the two lists.`,s:`x = [1, 2, 3, 4]
+y = [3, 4, 5]
+print(sorted(set(x) ^ set(y)))`},
+"1-2":{d:`A dict maps hashable keys to values and keeps insertion order since Python 3.7. Values are read with square brackets, and assigning to a key that is missing simply adds a new entry.`,c:`d = {"a": 1, "b": 2}
+d["c"] = 3
+d["a"] += 10
+
+print(d["a"], len(d), "b" in d)
+print(d.get("z", 0))`,p:`Given the dict {"a": 1, "b": 2, "c": 3}, print a new dict where every value is ten times larger using a dict comprehension.`,s:`d = {"a": 1, "b": 2, "c": 3}
+print({k: v * 10 for k, v in d.items()})`},
+"1-3":{d:`Lists, tuples, dicts and sets nest inside one another to any depth to represent trees, matrices and records. Indexing drills down one level per bracket pair, which makes the structure flexible but easy to get wrong.`,c:`data = {"users": [{"name": "Ada", "age": 36}]}
+print(data["users"][0]["name"])
+
+rows = [[1, 2], [3, 4]]
+print(rows[1][0])`,p:`Given the dict {"a": [1, 2], "b": [3, 4]}, print the total sum of all the numbers in both lists.`,s:`data = {"a": [1, 2], "b": [3, 4]}
+total = 0
+for v in data.values():
+    total += sum(v)
+print(total)`},
+"1-4":{d:`A slice takes a contiguous piece using the form start:stop:step, where stop is excluded and omitted bounds default to the beginning and the end. Negative indices and a step of -1 walk backwards.`,c:`s = "abcdefgh"
+
+print(s[2:6], s[:3], s[::2], s[::-1])
+nums = [1, 2, 3, 4, 5]
+print(nums[1:4])`,p:`Given s = "abcdefgh", print the substring from index 2 up to but not including index 6, and on the next line print that substring reversed.`,s:`s = "abcdefgh"
+print(s[2:6])
+print(s[2:6][::-1])`},
+"1-5":{d:`A list comprehension builds a list from an iterable in one expression with a for clause and an optional if filter. It replaces a loop plus append and is usually faster and much shorter to read.`,c:`nums = range(1, 11)
+squares = [n * n for n in nums if n % 2 == 0]
+pairs = [(i, i * i) for i in range(3)]
+
+print(squares, pairs)`,p:`Given the list ["apple", "fig", "banana"], print a list holding the length of each word using a list comprehension.`,s:`words = ["apple", "fig", "banana"]
+print([len(w) for w in words])`},
+"1-6":{d:`A dict comprehension builds key and value pairs from an iterable, while a set comprehension collects the unique results of an expression. Both use the same for and if clauses as the list comprehension.`,c:`words = ["a", "bb", "c"]
+lengths = {w: len(w) for w in words}
+unique = {len(w) for w in words}
+
+print(lengths, unique)`,p:`Given the list ["hi", "no", "yes"], print a dict that maps each word to its number of characters.`,s:`words = ["hi", "no", "yes"]
+print({w: len(w) for w in words})`},
+"1-7":{d:`The sorted function returns a new sorted list and leaves the original untouched. The key argument is a function applied to each element to get the value to sort by, and reverse=True flips the result.`,c:`words = ["pear", "fig", "banana"]
+
+print(sorted(words))
+print(sorted(words, key=len))
+print(sorted(words, key=len, reverse=True))`,p:`Given the list ["bbb", "a", "cc"], print the words sorted by length, and on the next line print them in reverse alphabetical order.`,s:`words = ["bbb", "a", "cc"]
+print(sorted(words, key=len))
+print(sorted(words, reverse=True))`},
+"1-8":{d:`Iterating a dict directly yields only its keys, while the methods items, keys and values give key and value pairs, keys and values. items returns a live view, so it reflects changes made while looping.`,c:`d = {"a": 1, "b": 2}
+
+for k, v in d.items():
+    print(k, v)
+
+print(list(d.keys()), list(d.values()))
+for k in d:
+    print(k)`,p:`Given the dict {"a": 1, "b": 2, "c": 3}, print each key on its own line followed by its value doubled.`,s:`d = {"a": 1, "b": 2, "c": 3}
+for k, v in d.items():
+    print(k, v * 2)`},
+"1-9":{d:`Plain assignment only binds a second name to the same object, so mutating one name changes the other. copy.copy and list.copy duplicate only the outer container, while copy.deepcopy recursively duplicates nested objects so inner changes stay isolated.`,c:`import copy
+
+a = [[1, 2], [3, 4]]
+shallow = a[:]
+deep = copy.deepcopy(a)
+deep[0][0] = 99
+
+print(a)
+print(shallow, deep)`,p:`Given a = [1, [2, 3]], make a deep copy, change the inner element to 99 in the copy only, then print the original and the copy on separate lines.`,s:`import copy
+
+a = [1, [2, 3]]
+b = copy.deepcopy(a)
+b[1][0] = 99
+print(a)
+print(b)`},
+"2-0":{d:`A function is defined with the def keyword followed by a parameter list and an indented body. The body runs only when the function is called, and without a return statement the call produces None.`,c:`def greet(name):
+    return "Hello, " + name
+
+print(greet("Ada"))
+print(greet())`,p:`Define a function square(n) that returns n multiplied by itself, then print the result of square(7).`,s:`def square(n):
+    return n * n
+
+print(square(7))`},
+"2-1":{d:`Positional arguments are matched to parameters by position, while keyword arguments are matched by name and can be given in any order. Passing the wrong number of arguments or an unknown keyword raises a TypeError.`,c:`def show(name, age):
+    print(name, age)
+
+show("Ada", 36)
+show(age=36, name="Ada")`,p:`Define a function rect(w, h) that prints its area, then call it once with 3 and 4 positionally and once with the keyword arguments w=3 and h=4.`,s:`def rect(w, h):
+    print(w * h)
+
+rect(3, 4)
+rect(w=3, h=4)`},
+"2-2":{d:`A parameter with a default value becomes optional, and such parameters must come after all required ones. Default values are evaluated once when the function is defined, not on every call.`,c:`def power(base, exp=2):
+    return base ** exp
+
+print(power(3))
+print(power(3, 4))
+print(power(3, exp=5))`,p:`Define greet(name, greeting="Hello") that returns the greeting and the name joined by a comma, then print greet("Ada") and greet("Ada", greeting="Hi").`,s:`def greet(name, greeting="Hello"):
+    return greeting + ", " + name
+
+print(greet("Ada"))
+print(greet("Ada", greeting="Hi"))`},
+"2-3":{d:`A parameter written as *args collects any extra positional arguments into a tuple, and **kwargs collects any extra keyword arguments into a dict. Both let a single function accept a variable number of inputs.`,c:`def total(*nums, **opts):
+    print(sum(nums), opts.get("tax", 0))
+
+total(1, 2, 3, tax=0.2)
+
+def show(*names):
+    print(list(names))`,p:`Define show(*names, **extra) that prints each name on its own line and then prints the sorted keys of extra on one line.`,s:`def show(*names, **extra):
+    for n in names:
+        print(n)
+    print(sorted(extra.keys()))`},
+"2-4":{d:`A return statement ends the function immediately and can hand back any object, including a tuple. Returning several values is really returning one tuple that the caller can unpack into several names in a single assignment.`,c:`def stats(nums):
+    return min(nums), max(nums)
+
+lo, hi = stats([3, 1, 4])
+print(lo, hi)`,p:`Define a function swap(a, b) that returns its two arguments in reverse order, then unpack the result of swap(3, 8) into x and y and print them.`,s:`def swap(a, b):
+    return b, a
+
+x, y = swap(3, 8)
+print(x, y)`},
+"2-5":{d:`Names are resolved by looking through the Local, Enclosing, Global and Built-in scopes in that order. Assigning to a name inside a function makes it local, so reading a global there requires the global keyword.`,c:`x = "global"
+
+def show():
+    print(x)
+
+def change():
+    global x
+    x = "changed"
+
+show()
+change()
+print(x)`,p:`Define a global variable count = 5, then a function that uses a global count statement to set it to 10, call the function and print count.`,s:`count = 5
+
+def bump():
+    global count
+    count = 10
+
+bump()
+print(count)`},
+"2-6":{d:`A nested function that uses names from its enclosing function keeps a reference to that scope, and this bundle of function plus captured variables is called a closure. The captured values stay alive even after the enclosing call returns.`,c:`def counter():
+    n = 0
+
+    def inc():
+        nonlocal n
+        n += 1
+        return n
+    return inc
+
+c = counter()
+print(c(), c())`,p:`Define make_adder(k) that returns a function which adds k to its argument, then print the result of make_adder(5)(10).`,s:`def make_adder(k):
+    def add(x):
+        return x + k
+    return add
+
+add5 = make_adder(5)
+print(add5(10))`},
+"2-7":{d:`A lambda is an anonymous single-expression function written as lambda parameters: expression. It is mainly used as a short argument for functions such as sorted, map and filter, where writing a full def would be noise.`,c:`nums = [3, 1, 2]
+
+print(sorted(nums, key=lambda n: -n))
+print(list(map(lambda n: n * n, nums)))
+print([x for x in nums if (lambda n: n > 1)(x)])`,p:`Given the list [1, -2, 3, -4], print the list of absolute values produced by map together with a lambda.`,s:`nums = [1, -2, 3, -4]
+print(list(map(lambda n: abs(n), nums)))`},
+"2-8":{d:`A recursive function calls itself with a smaller input until it reaches a base case that returns directly. Recursion follows the mathematical definition of a problem closely, but it needs a base case and a shrinking argument to terminate.`,c:`def fact(n):
+    if n <= 1:
+        return 1
+    return n * fact(n - 1)
+
+print(fact(5))`,p:`Define a recursive function fib(n) where fib(0) is 0 and fib(1) is 1, then print fib(10).`,s:`def fib(n):
+    if n < 2:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print(fib(10))`},
+"2-9":{d:`Type hints annotate parameters and return values so readers and static tools can understand the contract, but they are not enforced at runtime. The typing module adds richer forms such as List, Dict and Optional.`,c:`def total(items: list[int]) -> int:
+    return sum(items)
+
+def label(n: float) -> str:
+    return f"{n:.2f}"
+
+print(total([1, 2]), label(1.5))`,p:`Define repeat(s: str, n: int) -> str with type hints so that it returns s repeated n times, then print repeat("ab", 3).`,s:`def repeat(s: str, n: int) -> str:
+    return s * n
+
+print(repeat("ab", 3))`},
+"3-0":{d:`A module is a .py file holding definitions that other files can import. Standard modules such as math, random and os need no installation and are imported by name, giving namespace access to their functions.`,c:`import math
+from math import pi
+
+print(math.floor(2.7), pi > 3)
+print(math.pow(2, 10))`,p:`Use the math module to print the square root of 144, then print it rounded to one decimal place.`,s:`import math
+
+print(math.sqrt(144))
+print(round(math.sqrt(144), 1))`},
+"3-1":{d:`A package is a directory of Python modules marked by an __init__.py file, and it is imported as one unit from its parent directory. The __init__.py body runs once when the package is first imported and is the usual place for shared names.`,c:`# mypkg/__init__.py
+NAME = "demo"
+
+# main.py
+import mypkg
+
+print(mypkg.NAME)`,p:`Suppose the package mypkg has an __init__.py that defines NAME = "demo", so write the import line and the print line that output demo.`,s:`import mypkg
+
+print(mypkg.NAME)`},
+"3-2":{d:`Import math loads the whole module, from math import pi pulls in a single name, and import math as m renames the module for a shorter handle. A wildcard import grabs every public name but is discouraged because origins become unclear.`,c:`import os.path as p
+from collections import deque
+from math import sqrt as root
+
+print(bool(p.sep), deque([1, 2]), root(9))`,p:`Using a from import of the math module, print the square root of 81.`,s:`from math import sqrt
+
+print(sqrt(81))`},
+"3-3":{d:`The guard if __name__ == "__main__": runs a block only when the file is executed directly as a script. When the file is imported instead, the definitions are loaded but the block is skipped, which keeps side effects out of the import.`,c:`def main():
+    print("running")
+
+if __name__ == "__main__":
+    main()`,p:`Write a function main() that prints hello and a main guard that calls it, all in one snippet.`,s:`def main():
+    print("hello")
+
+if __name__ == "__main__":
+    main()`},
+"3-4":{d:`pip is the package installer that downloads packages from PyPI and other indexes into the active environment. The common commands are install, uninstall, list, show and freeze, and pinning a version with an equals sign keeps builds reproducible.`,c:`# pip install requests
+# pip install requests==2.31.0
+# pip list
+# pip uninstall requests`,p:`Give the pip command that installs the package requests into the current environment and the command that lists every installed package with its version.`,s:`# pip install requests
+# pip list`},
+"3-5":{d:`A virtual environment is an isolated directory with its own interpreter and installed packages, so two projects can require different versions without conflicting. Create one with python -m venv, activate the script inside the folder, and deactivate when finished.`,c:`# python -m venv .venv
+# source .venv/bin/activate
+# pip install requests
+# deactivate`,p:`Give the commands that create a virtual environment named .venv, activate it, and then deactivate it again.`,s:`# python -m venv .venv
+# source .venv/bin/activate
+# deactivate`},
+"3-6":{d:`requirements.txt lists the exact packages a project needs, one per line, so another machine can reproduce the environment. pip freeze writes the current environment to that file and pip install -r reads it back.`,c:`# requests==2.31.0
+# numpy==1.26.4
+
+# pip freeze > requirements.txt
+# pip install -r requirements.txt`,p:`Give the pip command that installs every package listed in a file called requirements.txt, and the command that creates that file from the current environment.`,s:`# pip freeze > requirements.txt
+# pip install -r requirements.txt`},
+"3-7":{d:`A relative import begins with one or more dots and reaches modules inside the enclosing package, resolved against the package location instead of the current working directory. One dot means the current package and two dots mean its parent.`,c:`# from . import helpers
+# from .utils import parse
+# from ..models import User`,p:`Write the import statement that brings in the name parse from a module named utils that sits in the same package as the current file.`,s:`from .utils import parse`},
+"3-8":{d:`The standard library ships with every Python install and covers files, dates, maths, text and data structures, so many needs need no third-party package at all. Worth knowing modules include os, sys, math, json, datetime, re, collections and itertools.`,c:`import datetime
+import json
+
+print(datetime.date.today().year > 2000)
+print(json.dumps({"ok": True}))`,p:`Using the json module, convert the dict {"a": 1} into a JSON string and print it.`,s:`import json
+
+print(json.dumps({"a": 1}))`}
+};
+var RDM_PY2={
+"4-0":{d:`A class is a template for creating objects that bundles data (attributes) with the functions (methods) that operate on it. The class keyword declares it, and it only becomes real objects when you instantiate it.`,c:`class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return self.name + " says woof"
+
+print(Dog("Rex").speak())`,p:`Define a class Point whose __init__ takes x and y and has a method dist_origin returning the distance from the origin, then print Point(3, 4).dist_origin() (expect 5.0).`,s:`import math
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def dist_origin(self):
+        return math.sqrt(self.x ** 2 + self.y ** 2)
+
+print(Point(3, 4).dist_origin())`},
+"4-1":{d:`An instance is a concrete object built from a class, and __init__ is the method that runs to set up its attributes when that object is created. It always takes self as its first argument and is never called directly.`,c:`class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+p = Point(2, 3)
+print(p.x, p.y)`,p:`Write a class Rectangle whose __init__ takes width and height, give it an area method, then print Rectangle(3, 5).area() (expect 15).`,s:`class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+print(Rectangle(3, 5).area())`},
+"4-2":{d:`Class attributes live on the class itself and are shared by every instance, while instance attributes are created per object with self.name = value. Writing self.name only affects that one object and never the class.`,c:`class Dog:
+    kind = "animal"
+
+d = Dog()
+Dog.kind = "canine"
+print(d.kind, Dog.kind)`,p:`Define a class Player with the class attribute limit = 5 and an instance attribute name set in __init__, then print Player.limit and Player("Ann").name on one line (expect "5 Ann").`,s:`class Player:
+    limit = 5
+
+    def __init__(self, name):
+        self.name = name
+
+print(Player.limit, Player("Ann").name)`},
+"4-3":{d:`A function defined in a class body is an instance method and its first parameter self is the object the method was called on. Calling obj.method() passes obj in for you, so calling method() with no dot fails.`,c:`class Counter:
+    def __init__(self):
+        self.n = 0
+    def add(self, step):
+        self.n += step
+        return self.n
+c = Counter()
+print(c.add(2), c.add(3))`,p:`Write a class Greeter with an instance method greet(name) that returns "Hello, " plus name, then print Greeter().greet("Bo") (expect Hello, Bo).`,s:`class Greeter:
+    def greet(self, name):
+        return "Hello, " + name
+
+print(Greeter().greet("Bo"))`},
+"4-4":{d:`A class can derive from another by naming the parent in parentheses, which reuses its code and lets the child add or override behaviour. The child automatically gets every method and attribute of the parent.`,c:`class Animal:
+    def speak(self):
+        return "..."
+class Dog(Animal):
+    def speak(self):
+        return "woof"
+
+print(Dog().speak())`,p:`Create class Vehicle with a method kind returning "vehicle" and class Car(Vehicle) overriding kind to return "car", then print Car().kind() (expect car).`,s:`class Vehicle:
+    def kind(self):
+        return "vehicle"
+
+class Car(Vehicle):
+    def kind(self):
+        return "car"
+
+print(Car().kind())`},
+"4-5":{d:`super() gives a child access to the parent class so shared setup does not have to be repeated. Calling super().__init__(...) runs the parent initializer before the child finishes its own initialization.`,c:`class Dog:
+    def __init__(self, name):
+        self.name = name
+class Pup(Dog):
+    def __init__(self, name):
+        super().__init__(name)
+        self.tag = "young"
+print(Pup("rex").tag)`,p:`Define class Base whose __init__ sets self.width, and class Square(Base) whose __init__ calls super().__init__(5) then sets self.height = 2, then print Square().area() where area multiplies them (expect 10).`,s:`class Base:
+    def __init__(self, width):
+        self.width = width
+
+class Square(Base):
+    def __init__(self):
+        super().__init__(5)
+        self.height = 2
+
+    def area(self):
+        return self.width * self.height
+
+print(Square().area())`},
+"4-6":{d:`Python linearizes a class hierarchy into a single list called the method resolution order, which tells it where to look for each method. You can inspect it through __mro__ or compute it with the mro() function.`,c:`class A:
+    pass
+
+class B(A):
+    pass
+
+print(B.__mro__)`,p:`Define class A, class B(A) and class C(A), then print the class name found at index 1 of C.__mro__ (expect A).`,s:`class A:
+    pass
+
+class B(A):
+    pass
+
+class C(A):
+    pass
+
+print(C.__mro__[1].__name__)`},
+"4-7":{d:`A @staticmethod needs no arguments at all while a @classmethod receives the class as its first argument named cls. Both are called on the class itself and suit helpers that do not depend on a single instance.`,c:`class Factory:
+    prefix = "v"
+
+    @classmethod
+    def tag(cls, n):
+        return cls.prefix + str(n)
+
+print(Factory.tag(1), Factory.prefix)`,p:`Write class Tools with a staticmethod add(a, b) returning a plus b, then print Tools.add(2, 5) (expect 7).`,s:`class Tools:
+    @staticmethod
+    def add(a, b):
+        return a + b
+
+print(Tools.add(2, 5))`},
+"4-8":{d:`A @property turns a method into an attribute you can read like a plain variable, while its setter validates or transforms writes. This lets you change the internal representation later without breaking callers.`,c:`class Temp:
+    def __init__(self, c):
+        self.c = c
+    @property
+    def f(self):
+        return self.c * 9 / 5 + 32
+
+print(Temp(100).f)`,p:`Create class Box that sets _side = 2 in __init__ and exposes a property area returning _side ** 2, then print Box().area (expect 4, with no parentheses since it is a property).`,s:`class Box:
+    def __init__(self):
+        self._side = 2
+
+    @property
+    def area(self):
+        return self._side ** 2
+
+print(Box().area)`},
+"4-9":{d:`The dataclasses decorator generates __init__, __repr__ and comparison methods from annotated class attributes, removing a lot of boilerplate. Fields with defaults must come after those without, and frozen=True makes instances immutable.`,c:`from dataclasses import dataclass
+
+@dataclass
+class Point:
+    x: int
+    y: int = 0
+p = Point(1, 2)
+print(p)`,p:`Define a dataclass Item with fields name: str and price: float = 0.0, create Item("pen") and print its price (expect 0.0).`,s:`from dataclasses import dataclass
+
+@dataclass
+class Item:
+    name: str
+    price: float = 0.0
+
+print(Item("pen").price)`},
+"4-10":{d:`Enum members are named constants declared inside a class and they compare by identity, which is safer than bare strings or numbers. Each member carries a name and a value and can be iterated or looked up by value.`,c:`from enum import Enum
+
+class Color(Enum):
+    RED = 1
+    GREEN = 2
+
+print(Color.RED.name, Color(2).name)`,p:`Define enum Level with members LOW = 1 and HIGH = 2, then print Level.HIGH.value (expect 2).`,s:`from enum import Enum
+
+class Level(Enum):
+    LOW = 1
+    HIGH = 2
+
+print(Level.HIGH.value)`},
+"5-0":{d:`An exception is an object raised when something goes wrong at runtime, and it unwinds the stack until something catches it. Python ships types such as ValueError and TypeError, and an uncaught exception ends the program with a traceback.`,c:`def half(n):
+    if n == 0:
+        raise ValueError("cannot halve zero")
+    return n / 2
+try:
+    half(0)
+except ValueError as err:
+    print(err)`,p:`Write square_root(n) that raises ValueError when n is negative and returns n ** 0.5 otherwise, then call it with -4 inside a try block and print "bad input" from the except clause (expect bad input).`,s:`def square_root(n):
+    if n < 0:
+        raise ValueError("negative input")
+    return n ** 0.5
+
+try:
+    print(square_root(-4))
+except ValueError:
+    print("bad input")`},
+"5-1":{d:`A try block wraps code that may fail and one or more except clauses catch matching exception types. Catching a specific type instead of a bare except keeps genuine bugs from being silently swallowed.`,c:`try:
+    print(int("abc"))
+except ValueError:
+    print("not a number")
+except TypeError:
+    print("wrong type")`,p:`Write code that tries to convert the string "x" with int() and catches ValueError to print "failed" (expect failed).`,s:`try:
+    print(int("x"))
+except ValueError:
+    print("failed")`},
+"5-2":{d:`The else clause of a try runs only when no exception was raised, and finally always runs whether or not one occurred. It is the right place for cleanup such as closing a resource or undoing a temporary change.`,c:`try:
+    value = int("7")
+except ValueError:
+    print("bad")
+else:
+    print("got", value)
+finally:
+    print("done")`,p:`Write a try block dividing 10 by 2, an else clause printing "ok 5.0", and a finally clause printing "cleanup" (expect ok 5.0 then cleanup).`,s:`try:
+    value = 10 / 2
+except ZeroDivisionError:
+    print("bad")
+else:
+    print("ok", value)
+finally:
+    print("cleanup")`},
+"5-3":{d:`The raise statement throws an exception object and stops the current function immediately. You can raise any exception class, and it is good practice to pass a helpful message along with it.`,c:`def set_age(n):
+    if n < 0:
+        raise ValueError("age must be >= 0")
+    return n
+try:
+    set_age(-1)
+except ValueError as err:
+    print(err)`,p:`Write a function check(n) that raises TypeError("bad type") when n is not an int, call it with "hi" in a try block, and print the message from the except clause (expect bad type).`,s:`def check(n):
+    if not isinstance(n, int):
+        raise TypeError("bad type")
+    return n
+
+try:
+    check("hi")
+except TypeError as err:
+    print(err)`},
+"5-4":{d:`You define your own exception by subclassing Exception, which lets callers catch a whole family of related errors with one clause. Custom classes can carry extra data and usually live in a dedicated errors module.`,c:`class SaveError(IOError):
+    pass
+
+try:
+    raise SaveError("disk full")
+except IOError as err:
+    print(type(err).__name__, err)`,p:`Define class MyError(Exception), raise MyError("boom") inside a try block, and print the message from the except clause (expect boom).`,s:`class MyError(Exception):
+    pass
+
+try:
+    raise MyError("boom")
+except MyError as err:
+    print(err)`},
+"5-5":{d:`The "raise ... from ..." syntax links a new exception to the one that caused it, forming an explicit cause chain. The traceback then shows both errors, which is far easier to debug than a bare re-raise.`,c:`try:
+    int("x")
+except ValueError as err:
+    try:
+        raise RuntimeError("bad") from err
+    except RuntimeError as new:
+        print(type(new.__cause__).__name__)`,p:`Call int("x") in a try block, and in the except ValueError handler raise TypeError("wrapped") from err, then catch TypeError and print the class name of its __cause__ (expect ValueError).`,s:`try:
+    int("x")
+except ValueError as err:
+    try:
+        raise TypeError("wrapped") from err
+    except TypeError as new:
+        print(type(new.__cause__).__name__)`},
+"5-6":{d:`An assert statement raises AssertionError when a condition is false and is meant for internal checks that should never fail. Asserts are stripped when Python runs with -O, so they must never validate user input.`,c:`def area(w, h):
+    assert w > 0 and h > 0, "sides must be positive"
+    return w * h
+
+try:
+    area(2, -1)
+except AssertionError as err:
+    print(err)`,p:`Write a function square(n) that asserts n > 0, then call it with 0 in a try block and print "invalid" from the except AssertionError clause (expect invalid).`,s:`def square(n):
+    assert n > 0, "n must be positive"
+    return n * n
+
+try:
+    square(0)
+except AssertionError:
+    print("invalid")`},
+"5-7":{d:`The with statement calls __enter__ on a context manager and guarantees __exit__ runs when the block ends, even if an exception escapes. It removes try/finally boilerplate and is the standard way to handle files, locks and connections.`,c:`class Managed:
+    def __enter__(self):
+        print("open")
+    def __exit__(self, *args):
+        print("close")
+with Managed():
+    print("body")`,p:`Write a class Guard whose __enter__ prints "in" and whose __exit__ prints "out", then use it in a with block (expect in then out).`,s:`class Guard:
+    def __enter__(self):
+        print("in")
+
+    def __exit__(self, *args):
+        print("out")
+
+with Guard():
+    pass`},
+"6-0":{d:`open(path, "r") returns a text file object that decodes bytes into str using the default encoding. The object is iterable line by line, and read() with no argument loads the entire file into one string.`,c:`with open("notes.txt", "w") as f:
+    f.write("alpha\\nbeta\\n")
+
+with open("notes.txt") as f:
+    for line in f:
+        print(line.strip())`,p:`Write "a\\nb\\n" to data.txt, then read it back and print the second line stripped (expect b).`,s:`with open("data.txt", "w") as f:
+    f.write("a\\nb\\n")
+
+with open("data.txt") as f:
+    lines = f.readlines()
+
+print(lines[1].strip())`},
+"6-1":{d:`open(path, "w") creates the file or truncates an existing one and returns a writable file object. The "a" mode appends instead, while the "x" mode fails loudly if the file already exists.`,c:`with open("log.txt", "w") as f:
+    f.write("first\\n")
+
+with open("log.txt", "a") as f:
+    f.write("second\\n")
+
+print(open("log.txt").read().split())`,p:`Write "one" to out.txt, then append "two", then read the file and print the number of lines it contains (expect 2).`,s:`with open("out.txt", "w") as f:
+    f.write("one\\n")
+
+with open("out.txt", "a") as f:
+    f.write("two\\n")
+
+print(len(open("out.txt").read().splitlines()))`},
+"6-2":{d:`Using with open(...) as f makes the file close automatically when the block exits, so a file handle is never leaked. It is the accepted style for every file access in Python, even for a single short read.`,c:`with open("notes.txt", "w") as f:
+    f.write("hello\\n")
+
+with open("notes.txt") as f:
+    print(f.read().strip())`,p:`Write "x" to tmp.txt inside a with block, reopen it inside another with block, and print its content stripped (expect x).`,s:`with open("tmp.txt", "w") as f:
+    f.write("x")
+
+with open("tmp.txt") as f:
+    print(f.read().strip())`},
+"6-3":{d:`The csv module reads and writes rows of lists without you parsing quotes or commas yourself. A DictReader turns each row into a dict keyed by the header line, which keeps column access readable.`,c:`import csv
+
+with open("p.csv", "w", newline="") as f:
+    csv.writer(f).writerows([["name", "age"], ["Ann", "30"]])
+
+with open("p.csv", newline="") as f:
+    for row in csv.DictReader(f):
+        print(row["name"], int(row["age"]) + 1)`,p:`Write a CSV file with header id,score and one data row 1,10, then read it with DictReader and print the score converted to int plus 5 (expect 15).`,s:`import csv
+
+with open("s.csv", "w", newline="") as f:
+    csv.writer(f).writerows([["id", "score"], [1, 10]])
+
+with open("s.csv", newline="") as f:
+    for row in csv.DictReader(f):
+        print(int(row["score"]) + 5)`},
+"6-4":{d:`json.load and json.dump convert between Python objects and JSON text and raise errors on malformed input. It is the standard way to read and write configuration files and API payloads.`,c:`import json
+
+text = '{"name": "Ann", "age": 30}'
+data = json.loads(text)
+print(data["name"], json.dumps({"ok": True}))`,p:`Parse the string '{"n": 7}' with json.loads and print the value plus 1 (expect 8).`,s:`import json
+
+data = json.loads('{"n": 7}')
+print(data["n"] + 1)`},
+"6-5":{d:`pathlib.Path represents filesystem paths as objects instead of raw strings and offers the same operations on every OS. It removes most path concatenation and bundles read_text, write_text, glob and mkdir together.`,c:`from pathlib import Path
+
+d = Path("demo")
+d.mkdir(exist_ok=True)
+p = d / "notes.txt"
+p.write_text("hello\\n", encoding="utf-8")
+print(p.read_text(encoding="utf-8").strip(), p.exists())`,p:`Use pathlib to write "hi" to Path("greet.txt") and read it back with read_text, then print the content (expect hi).`,s:`from pathlib import Path
+
+p = Path("greet.txt")
+p.write_text("hi", encoding="utf-8")
+print(p.read_text(encoding="utf-8"))`},
+"6-6":{d:`Binary mode "rb" and "wb" read and write raw bytes with no encoding step at all. It is the correct mode for images, audio and serialized data, and indexing a bytes object gives integer values.`,c:`with open("blob.bin", "wb") as f:
+    f.write(bytes([1, 2, 3]))
+
+with open("blob.bin", "rb") as f:
+    data = f.read()
+
+print(data, list(data))`,p:`Write bytes([104, 105]) to b.bin in binary mode, read the bytes back, and print them decoded as ascii (expect hi).`,s:`with open("b.bin", "wb") as f:
+    f.write(bytes([104, 105]))
+
+with open("b.bin", "rb") as f:
+    data = f.read()
+
+print(data.decode("ascii"))`},
+"6-7":{d:`os.environ maps environment variables to strings and behaves like a dictionary, though writes only affect the current process. It is the standard way to read secrets and settings without hardcoding them.`,c:`import os
+
+os.environ["APP_MODE"] = "test"
+print(os.environ.get("APP_MODE"), os.environ.get("MISSING", "default"))`,p:`Read the environment variable PATH with os.environ.get and print it (expect the system PATH string on one line).`,s:`import os
+
+print(os.environ.get("PATH"))`},
+"7-0":{d:`os handles filesystem and process tasks such as listing directories and renaming, while sys holds interpreter details like arguments, platform and exit codes. Together they are the usual tools for scripts that touch the machine.`,c:`import os
+import sys
+
+print(os.path.exists("."), len(sys.argv) >= 1)
+print(sys.maxsize > 0)`,p:`Write a script that prints "bye" and then calls sys.exit(0) to end with a success status (expect only bye on stdout).`,s:`import sys
+
+print("bye")
+sys.exit(0)`},
+"7-1":{d:`datetime provides date, datetime and timedelta objects with arithmetic and rich formatting, and can read the current clock. Timezone aware objects are preferred in real applications over naive ones.`,c:`from datetime import datetime, timedelta
+
+now = datetime(2024, 5, 1, 12, 0)
+print(now.strftime("%Y-%m-%d"), (now + timedelta(days=2)).day)`,p:`Use datetime.now() to get the current datetime and print whether its year is greater than 2000 (expect True).`,s:`from datetime import datetime
+
+print(datetime.now().year > 2000)`},
+"7-2":{d:`math gives fast implementations of the common mathematical functions while random produces pseudo random numbers from a seedable generator. Never use random for security, since its output is predictable from the seed.`,c:`import math
+import random
+
+random.seed(1)
+print(round(math.sqrt(2), 4), round(math.hypot(3, 4), 2))
+print([random.randint(1, 1) for _ in range(3)])`,p:`Seed random with 7, then print three random integers from 1 to 100 separated by spaces (expect three numbers on one line).`,s:`import random
+
+random.seed(7)
+print(*[random.randint(1, 100) for _ in range(3)])`},
+"7-3":{d:`collections ships specialised container classes such as deque, Counter, defaultdict and namedtuple. They fill the gaps where built-in list and dict behaviour is awkward or too slow for the job.`,c:`from collections import deque, Counter
+
+q = deque([1, 2, 3])
+q.appendleft(0)
+print(list(q), Counter("aba").most_common(1))`,p:`Use collections.Counter to count the letters in "hello" and print how many times the letter l occurs (expect 2).`,s:`from collections import Counter
+
+print(Counter("hello")["l"])`},
+"7-4":{d:`itertools builds lazy iterators over finite or infinite sequences using function style chaining. Because nothing is computed until iteration, chains over huge or endless sources stay cheap in memory.`,c:`from itertools import accumulate, islice
+
+print(list(accumulate([1, 2, 3, 4])))
+print(list(islice(range(100), 5)))`,p:`Use itertools.count(10, 5) with islice to take the first three values and print them as a list (expect [10, 15, 20]).`,s:`from itertools import count, islice
+
+print(list(islice(count(10, 5), 3)))`},
+"7-5":{d:`functools provides higher-order function helpers such as lru_cache, partial and reduce that memoize or adapt callables. Wrapping an expensive function in lru_cache turns repeated work into a dictionary lookup.`,c:`from functools import lru_cache, reduce
+
+@lru_cache(maxsize=None)
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+
+print(fib(30), reduce(lambda a, b: a * b, [1, 2, 3, 4]))`,p:`Wrap a function double(x) that returns x * 2 with lru_cache(maxsize=None), call it twice with 5, then print double.cache_info().hits (expect 1).`,s:`from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def double(x):
+    return x * 2
+
+double(5)
+double(5)
+print(double.cache_info().hits)`},
+"7-6":{d:`re compiles and applies regular expressions, matching patterns instead of building them by hand with split and replace. re.search finds the first hit, re.findall returns every hit and re.sub rewrites all matches.`,c:`import re
+
+text = "order 12 and order 7"
+print(re.findall(r"\\d+", text), re.sub(r"\\d+", "#", text))`,p:`Use re.findall to extract every lowercase word of length 4 or more from the string "the quick fox a b" and print the list (expect ['quick', 'fox']).`,s:`import re
+
+print(re.findall(r"[a-z]{4,}", "the quick fox a b"))`},
+"7-7":{d:`json is the standard module for serializing Python data to text and back, covering dicts, lists, strings, numbers, booleans and None. Its round trip guarantees make it the default format for config files and API bodies.`,c:`import json
+
+payload = {"a": [1, 2], "b": None, "c": True}
+text = json.dumps(payload, sort_keys=True)
+print(text, json.loads(text) == payload)`,p:`Use json.dumps to turn the dict {"k": "v"} into a string, load it back with json.loads, and print the value stored under key "k" (expect v).`,s:`import json
+
+data = json.loads(json.dumps({"k": "v"}))
+print(data["k"])`},
+"7-8":{d:`argparse turns command line arguments into typed and documented options with defaults and help text, which beats reading sys.argv by hand. It supports both positional arguments and flags written as --long-name.`,c:`import argparse
+
+p = argparse.ArgumentParser()
+p.add_argument("--times", type=int, default=2)
+args = p.parse_args([])
+print(args.times * 21)`,p:`Write an argparse script with an argument --name defaulting to "world" and print "Hello " plus args.name when it runs with no options (expect Hello world).`,s:`import argparse
+
+p = argparse.ArgumentParser()
+p.add_argument("--name", default="world")
+args = p.parse_args([])
+print("Hello " + args.name)`},
+"7-9":{d:`statistics implements mean, median, mode, variance and stdev with correct handling of small samples. Use it instead of averaging by hand, since it deals with even-length lists and edge cases properly.`,c:`from statistics import mean, median, stdev
+
+data = [2, 4, 4, 4, 5, 5, 7, 9]
+print(mean(data), median(data), round(stdev(data), 3))`,p:`Use statistics to compute the mean of the list [2, 4, 6] and print it (expect 4.0).`,s:`from statistics import mean
+
+print(mean([2, 4, 6]))`},
+"7-10":{d:`uuid generates 128 bit identifiers, with uuid4 drawing random ones that are practically collision free. They suit database keys and identifiers where a short incrementing counter will not do.`,c:`import uuid
+
+u = uuid.uuid4()
+print(u.version, len(str(u)))
+print(uuid.uuid5(uuid.NAMESPACE_DNS, "example.com"))`,p:`Generate an identifier with uuid.uuid4() and print the length of its string form (expect 36).`,s:`import uuid
+
+print(len(str(uuid.uuid4())))`}
+};
+var RDM_PY3={
+"8-0":{d:`A nested comprehension is a comprehension written inside another iterable clause, and it is the compact way to build grids, flatten lists, or transform a matrix in one pass.`,c:`grid = [[1, 2], [3, 4], [5, 6]]
+flat = [n for row in grid for n in row]
+squares = [[n * n for n in row] for row in grid]
+print(flat)
+print(squares)`,p:`Given a list of numbers, print a nested list where every number is doubled and the numbers are grouped three per inner list.`,s:`nums = [1, 2, 3, 4, 5, 6, 7]
+out = [[n * 2 for n in nums[i:i + 3]] for i in range(0, len(nums), 3)]
+print(out)`},
+"8-1":{d:`map, filter and reduce apply a function across a sequence: map transforms every item, filter keeps the items that pass a test, and reduce folds the sequence down to a single accumulated value.`,c:`from functools import reduce
+nums = [1, 2, 3, 4]
+doubled = list(map(lambda n: n * 2, nums))
+big = list(filter(lambda n: n > 2, nums))
+print(doubled, big, reduce(lambda a, b: a + b, nums))`,p:`Given a list of integers, print the squares of the even numbers only.`,s:`nums = [1, 2, 3, 4, 5, 6]
+out = list(map(lambda n: n * n, filter(lambda n: n % 2 == 0, nums)))
+print(out)`},
+"8-2":{d:`zip walks several iterables in parallel and stops at the shortest one, pairing elements so you can loop over multiple sequences at once or transpose a table.`,c:`names = ["ana", "bo", "cy"]
+scores = [10, 20, 30]
+for name, score in zip(names, scores):
+    print(name, score)
+print(list(zip(*zip(names, scores))))`,p:`Given two equal-length lists of names and ages, print each name followed by its age on one line.`,s:`names = ["ana", "bo"]
+ages = [23, 31]
+for name, age in zip(names, ages):
+    print(name, age)`},
+"8-3":{d:`any returns True as soon as one element is truthy and all returns True only if every element is truthy, and both short-circuit the moment the answer is decided.`,c:`nums = [0, 0, 5, 0]
+print(any(nums))
+print(all(nums))
+print(all(n > 0 for n in nums))
+print(any(n < 0 for n in nums))`,p:`Given a list of numbers, print True if every number is positive and False otherwise.`,s:`nums = [1, 2, 3]
+print(all(n > 0 for n in nums))`},
+"8-4":{d:`sorted accepts a key function that decides what each item is compared by, so you can order by any derived value such as a tuple field, a length, or a dict lookup.`,c:`words = ["pear", "fig", "banana"]
+print(sorted(words))
+print(sorted(words, key=len))
+print(sorted(words, key=len, reverse=True))
+users = [("ana", 23), ("bo", 31)]
+print(sorted(users, key=lambda u: u[1]))`,p:`Given a list of words, print them sorted from longest to shortest.`,s:`words = ["pear", "fig", "banana"]
+print(sorted(words, key=len, reverse=True))`},
+"8-5":{d:`itertools.groupby groups consecutive items that share a key, and because it only compares neighbours you must sort by that key first or one group will split into several.`,c:`from itertools import groupby
+names = ["ann", "bob", "amy", "ben", "cid"]
+for letter, group in groupby(sorted(names)):
+    print(letter, len(list(group)))`,p:`Given a list of words, print each first letter and how many words start with it.`,s:`from itertools import groupby
+words = ["ant", "ape", "bear", "bat"]
+for letter, group in groupby(sorted(words)):
+    print(letter, len(list(group)))`},
+"8-6":{d:`bisect uses binary search on a sorted list to find the index where a value belongs in O(log n) steps, so you can insert without re-sorting the whole list.`,c:`import bisect
+nums = [1, 3, 5, 7, 9]
+print(bisect.bisect_left(nums, 5))
+print(bisect.bisect_right(nums, 5))
+nums.insert(bisect.bisect_left(nums, 6), 6)
+print(nums)`,p:`Given a sorted list and a value, print the index where that value should be inserted to keep the list sorted.`,s:`import bisect
+nums = [2, 4, 6, 8]
+print(bisect.bisect_left(nums, 5))`},
+"8-7":{d:`Counter tallies occurrences of hashable items, and defaultdict creates a container with a default value the first time a missing key is touched, both from collections.`,c:`from collections import Counter, defaultdict
+words = ["a", "b", "a", "c", "a", "b"]
+print(Counter(words).most_common(2))
+groups = defaultdict(list)
+for w in words:
+    groups[w[0]].append(w)
+print(dict(groups))`,p:`Given a list of words, print each distinct word followed by how many times it appears.`,s:`from collections import Counter
+words = ["a", "b", "a", "c"]
+for word, count in Counter(words).items():
+    print(word, count)`},
+"9-0":{d:`A stack is last-in first-out, and a plain Python list acts as one with append for pushing and pop for removing the most recently added element.`,c:`stack = []
+for ch in "abc":
+    stack.append(ch)
+print("\\n".join(stack[::-1]))
+print(stack.pop(), stack)`,p:`Given a string of round, square and curly brackets, print True if the brackets are balanced and False otherwise, using a stack.`,s:`def balanced(s):
+    stack = []
+    pairs = {")": "(", "]": "[", "}": "{"}
+    for ch in s:
+        if ch in "([{":
+            stack.append(ch)
+        elif not stack or stack.pop() != pairs[ch]:
+            return False
+    return not stack
+
+print(balanced("([]{})"))`},
+"9-1":{d:`A queue is first-in first-out, and collections.deque gives O(1) appends and pops at both ends, which a list cannot do cheaply at the front.`,c:`from collections import deque
+q = deque(["a", "b", "c"])
+q.append("d")
+print(q.popleft())
+print(q)
+q.appendleft("z")
+print(q)`,p:`Given a list of items, print the items in the order a FIFO queue would release them, one per line.`,s:`from collections import deque
+q = deque(["a", "b", "c"])
+while q:
+    print(q.popleft())`},
+"9-2":{d:`A linked list is a chain of nodes where each node holds a value and a reference to the next, which makes insertion cheap but reaching any position linear.`,c:`class Node:
+    def __init__(self, value, nxt=None):
+        self.value, self.nxt = value, nxt
+head = Node(1, Node(2, Node(3)))
+node = head
+while node:
+    print(node.value)
+    node = node.nxt`,p:`Build a singly linked list from a list of numbers in reverse order and print its values from head to tail, one per line.`,s:`class Node:
+    def __init__(self, value, nxt=None):
+        self.value = value
+        self.nxt = nxt
+
+head = None
+for v in [1, 2, 3]:
+    head = Node(v, head)
+while head:
+    print(head.value)
+    head = head.nxt`},
+"9-3":{d:`A hash table maps keys to slots through a hash function so lookups, inserts and deletes stay O(1) on average, and the Python dict is exactly that structure.`,c:`table = {}
+table["apple"] = 3
+table["pear"] = 5
+table["apple"] = table.get("apple", 0) + 1
+print(table)
+print("kiwi" in table)`,p:`Given a list of numbers, print each distinct number and how many times it occurs, smallest first.`,s:`counts = {}
+for n in [1, 2, 1, 3, 2, 1]:
+    counts[n] = counts.get(n, 0) + 1
+for k in sorted(counts):
+    print(k, counts[k])`},
+"9-4":{d:`A binary search tree keeps smaller keys in the left subtree and larger ones in the right, which makes search, insert and delete O(log n) as long as the tree stays balanced.`,c:`tree = [0, 8, 3, 10, 1, 6, 0, 14, 0, 0, 0, 0, 0, 0, 0]
+def insert(t, v):
+    i = 1
+    while t[i]:
+        i = 2 * i if v < t[i] else 2 * i + 1
+    t[i] = v
+insert(tree, 7); insert(tree, 4)
+print(tree)`,p:`Given a binary search tree stored as a list where index 0 is unused, 0 means an empty slot, and the children of index i live at 2*i and 2*i+1, insert the value 7 and print the resulting list.`,s:`def insert(t, v):
+    i = 1
+    while t[i]:
+        i = 2 * i if v < t[i] else 2 * i + 1
+    t[i] = v
+
+tree = [0, 8, 3, 10, 1, 6, 0, 14, 0, 0, 0, 0, 0, 0, 0]
+insert(tree, 7)
+print(tree)`},
+"9-5":{d:`A heap keeps the smallest or largest element at the root so the extreme value is always cheap to reach, and heapq implements a min-heap for you.`,c:`import heapq
+heap = []
+heapq.heappush(heap, 5)
+heapq.heappush(heap, 2)
+heapq.heappush(heap, 8)
+print(heap)
+print(heapq.heappop(heap))
+print(heap[0])`,p:`Given a list of numbers, print the three smallest values in ascending order using a heap.`,s:`import heapq
+nums = [5, 1, 9, 3, 7]
+print(sorted(heapq.nsmallest(3, nums)))`},
+"9-6":{d:`A trie stores strings one character per edge, so lookup and prefix scans cost the length of the prefix instead of the number of words stored.`,c:`trie = {}
+for w in ["and", "ant", "bat"]:
+    node = trie
+    for ch in w:
+        node = node.setdefault(ch, {})
+print("an" in trie["a"], "x" in trie)`,p:`Given a list of words and a prefix, build a trie as nested dicts and print True if the prefix path exists, False otherwise.`,s:`words = ["cat", "car", "dog"]
+prefix = "ca"
+trie = {}
+for w in words:
+    node = trie
+    for ch in w:
+        node = node.setdefault(ch, {})
+node = trie
+for ch in prefix:
+    node = node.get(ch, {})
+print(bool(node))`},
+"9-7":{d:`A graph connects nodes with edges, and in Python you model it as a dict that maps each node to the list of its neighbours, which is an adjacency list.`,c:`graph = {"a": ["b", "c"], "b": ["a", "d"], "c": ["a"], "d": ["b"]}
+for node, neighbours in sorted(graph.items()):
+    print(node, "->", ", ".join(neighbours))
+print(len(graph))`,p:`Given a graph as a dict of adjacency lists, print each node in alphabetical order followed by how many neighbours it has.`,s:`graph = {"a": ["b", "c"], "b": ["a"], "c": ["a"]}
+for node in sorted(graph):
+    print(node, len(graph[node]))`},
+"9-8":{d:`Union-find tracks disjoint sets with a parent array plus path compression and union by rank, which makes grouping elements and testing membership nearly constant time.`,c:`parent = list(range(6))
+def find(x):
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+parent[find(0)] = parent[find(1)] = find(2)
+print(find(0) == find(2), find(3) == find(0))`,p:`Given a list of id pairs to merge with union-find, print how many distinct groups remain after every pair is merged.`,s:`parent = {}
+
+def find(x):
+    parent.setdefault(x, x)
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]
+        x = parent[x]
+    return x
+
+for a, b in [(1, 2), (2, 3), (4, 5)]:
+    parent[find(a)] = find(b)
+print(len({find(x) for x in parent}))`},
+"10-0":{d:`Big-O describes how an algorithm's cost grows with the input size n while ignoring constants and lower order terms, so you can compare algorithms independently of the machine.`,c:`from time import perf_counter
+def algo(n):
+    return sum(i * j for i in range(n) for j in range(n))
+for n in [400, 800]:
+    t0 = perf_counter()
+    algo(n)
+    print(n, round(perf_counter() - t0, 4))`,p:`Given n equal to 1000, print how many times the body of a nested double loop runs when both loops iterate over range(n).`,s:`n = 1000
+count = 0
+for i in range(n):
+    for j in range(n):
+        count += 1
+print(count)`},
+"10-1":{d:`Quicksort splits around a pivot and recurses on both halves, mergesort splits then merges sorted runs, and both land at O(n log n), while insertion sort is fine for small or nearly sorted data.`,c:`def quicksort(a):
+    if len(a) <= 1:
+        return a
+    pivot = a[-1]
+    rest = a[:-1]
+    return quicksort([x for x in rest if x < pivot]) + [pivot] + quicksort([x for x in rest if x >= pivot])
+print(quicksort([4, 2, 7, 1, 3]))`,p:`Given a list of numbers, print it sorted in ascending order using your own recursive merge sort.`,s:`def merge(a, b):
+    out = []
+    while a and b:
+        out.append(a.pop(0) if a[0] <= b[0] else b.pop(0))
+    return out + a + b
+
+def mergesort(items):
+    if len(items) <= 1:
+        return items
+    mid = len(items) // 2
+    return merge(mergesort(items[:mid]), mergesort(items[mid:]))
+
+print(mergesort([4, 2, 7, 1, 3]))`},
+"10-2":{d:`Binary search halves the remaining range on every step and finds a value in a sorted list in O(log n), while a linear scan costs O(n) but needs no ordering.`,c:`def binary_search(a, t):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        m = (lo + hi) // 2
+        if a[m] == t: return m
+        lo, hi = (m + 1, hi) if a[m] < t else (lo, m - 1)
+    return -1
+print(binary_search([1, 3, 5, 7, 9], 7))`,p:`Given a sorted list and a target, print the index of the target or -1 if it is absent, using binary search.`,s:`def binary_search(a, target):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == target:
+            return mid
+        if a[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+
+print(binary_search([1, 3, 5, 7], 5))`},
+"10-3":{d:`Two pointers sweep a sequence from both ends inward so each pair is decided in one linear pass, instead of testing every possible pair in quadratic time.`,c:`nums = [1, 4, 9, 15, 22]
+target, lo, hi = 20, 0, len(nums) - 1
+while lo < hi and nums[lo] + nums[hi] != target:
+    if nums[lo] + nums[hi] < target:
+        lo += 1
+    else:
+        hi -= 1
+print(lo, hi, nums[lo] + nums[hi])`,p:`Given a sorted list and a target sum, print the two values that add up to the target as a list, or print -1 if no such pair exists.`,s:`nums = [1, 4, 9, 15, 22]
+target = 20
+lo, hi = 0, len(nums) - 1
+pair = -1
+while lo < hi:
+    total = nums[lo] + nums[hi]
+    if total == target:
+        pair = [nums[lo], nums[hi]]
+        break
+    if total < target:
+        lo += 1
+    else:
+        hi -= 1
+print(pair)`},
+"10-4":{d:`A sliding window keeps a moving range over the data and updates its summary incrementally as the window shifts, which turns fixed-size subarray problems into an O(n) pass.`,c:`nums = [2, 1, 5, 1, 3, 2]
+k = 3
+window = sum(nums[:k])
+best = window
+for i in range(k, len(nums)):
+    window += nums[i] - nums[i - k]
+    best = max(best, window)
+print(best)`,p:`Given a list of numbers and a window size k, print the largest sum of any k consecutive elements.`,s:`def max_window(nums, k):
+    if not nums or k > len(nums):
+        return 0
+    total = sum(nums[:k])
+    best = total
+    for i in range(k, len(nums)):
+        total += nums[i] - nums[i - k]
+        best = max(best, total)
+    return best
+
+print(max_window([2, 1, 5, 1, 3, 2], 3))`},
+"10-5":{d:`A greedy algorithm commits to the locally best choice at each step and never revisits it, which is only optimal when that choice can always be extended into a complete solution.`,c:`coins = [1, 5, 10, 25]
+amount = 63
+chosen = []
+for coin in sorted(coins, reverse=True):
+    while amount >= coin:
+        amount -= coin
+        chosen.append(coin)
+print(chosen, sum(chosen))`,p:`Given coins 1, 5, 10 and 25 and an amount, print how many coins a greedy largest-first choice uses to reach that amount.`,s:`amount = 63
+count = 0
+for coin in (25, 10, 5, 1):
+    used, amount = divmod(amount, coin)
+    count += used
+print(count)`},
+"10-6":{d:`Dynamic programming stores the answer for each subproblem once and reuses it, trading extra memory for a large drop in time whenever subproblems overlap.`,c:`def fib(n, memo={}):
+    if n < 2:
+        return n
+    if n not in memo:
+        memo[n] = fib(n - 1) + fib(n - 2)
+    return memo[n]
+print([fib(i) for i in range(10)])`,p:`Given n as 30, print the n-th Fibonacci number for the sequence 0, 1, 1, 2, using a memoized recursive function.`,s:`def fib(n, memo={}):
+    if n < 2:
+        return n
+    if n not in memo:
+        memo[n] = fib(n - 1) + fib(n - 2)
+    return memo[n]
+
+print(fib(30))`},
+"10-7":{d:`Backtracking builds a solution choice by choice and undoes a choice as soon as it leads nowhere, so many partial solutions get explored while only valid paths stay live.`,c:`def subsets(nums):
+    if not nums:
+        return [[]]
+    out = subsets(nums[1:])
+    return out + [[nums[0]] + s for s in out]
+print(subsets([1, 2, 3]))`,p:`Given a list of distinct numbers, print every subset of that list using a recursive take-or-skip backtracking build.`,s:`def subsets(nums, i=0, cur=None):
+    if cur is None:
+        cur = []
+    if i == len(nums):
+        return [cur[:]]
+    out = subsets(nums, i + 1, cur + [nums[i]])
+    out += subsets(nums, i + 1, cur)
+    return out
+
+print(subsets([1, 2, 3]))`},
+"10-8":{d:`BFS explores a graph level by level with a queue and gives shortest paths measured in edges, while DFS dives down a single branch with recursion to explore the whole structure.`,c:`from collections import deque
+graph = {"a": ["b", "c"], "b": ["d"], "c": ["d"], "d": []}
+seen, queue = {"a"}, deque(["a"])
+while queue:
+    node = queue.popleft()
+    print(node, end=" ")
+    queue.extend(n for n in graph[node] if n not in seen)
+    seen.update(graph[node])`,p:`Given a graph as a dict of adjacency lists and a start node, print every reachable node in BFS order separated by single spaces.`,s:`from collections import deque
+graph = {"a": ["b", "c"], "b": ["d"], "c": ["d"], "d": []}
+seen, queue, order = {"a"}, deque(["a"]), []
+while queue:
+    node = queue.popleft()
+    order.append(node)
+    for nxt in graph[node]:
+        if nxt not in seen:
+            seen.add(nxt)
+            queue.append(nxt)
+print(" ".join(order))`},
+"11-0":{d:`Concurrency is about structuring a program so several tasks make progress over overlapping time, while parallelism is literally running them at the same instant on separate cores.`,c:`from concurrent.futures import ThreadPoolExecutor
+from time import sleep
+def job(n):
+    sleep(0.05)
+    return n * n
+with ThreadPoolExecutor(max_workers=3) as pool:
+    print(list(pool.map(job, [1, 2, 3])))`,p:`Given a list of numbers, print the squares of all of them computed by a ThreadPoolExecutor with three workers.`,s:`from concurrent.futures import ThreadPoolExecutor
+
+def sq(n):
+    return n * n
+
+with ThreadPoolExecutor(max_workers=3) as pool:
+    print(list(pool.map(sq, [1, 2, 3, 4])))`},
+"11-1":{d:`threading runs several tasks inside one process so they share memory, which is a good fit for I/O-bound work where each thread spends its time waiting on network or disk.`,c:`import threading
+from time import sleep
+def work(n):
+    sleep(0.05)
+    print("done", n)
+ts = [threading.Thread(target=work, args=(i,)) for i in range(3)]
+[t.start() for t in ts]
+[t.join() for t in ts]`,p:`Start three threads, each of which sleeps briefly and then prints its own number, then join all of them so the program waits.`,s:`import threading
+from time import sleep
+
+def work(n):
+    sleep(0.1)
+    print("done", n)
+
+ts = [threading.Thread(target=work, args=(i,)) for i in range(3)]
+for t in ts:
+    t.start()
+for t in ts:
+    t.join()`},
+"11-2":{d:`ThreadPoolExecutor manages a fixed set of reusable worker threads and hands back Future objects, so you avoid paying the cost of spawning a brand new thread for every small task.`,c:`from concurrent.futures import ThreadPoolExecutor
+def sq(n):
+    return n * n
+with ThreadPoolExecutor(max_workers=3) as pool:
+    futures = [pool.submit(sq, n) for n in range(4)]
+    print([f.result() for f in futures])`,p:`Using a ThreadPoolExecutor with two workers, print the squares of the numbers 1 through 4 in the order the tasks were submitted.`,s:`from concurrent.futures import ThreadPoolExecutor
+
+def sq(n):
+    return n * n
+
+with ThreadPoolExecutor(max_workers=2) as pool:
+    futures = [pool.submit(sq, n) for n in range(1, 5)]
+    print([f.result() for f in futures])`},
+"11-3":{d:`multiprocessing spawns separate OS processes with their own interpreter and memory, which gets you around the GIL and makes it the right tool for CPU-bound work.`,c:`from multiprocessing import Pool
+def sq(n):
+    return n * n
+if __name__ == "__main__":
+    with Pool(2) as pool:
+        print(pool.map(sq, [1, 2, 3, 4]))`,p:`Using multiprocessing.Pool with two worker processes and an if __name__ guard, print the squares of the numbers 1 through 4.`,s:`from multiprocessing import Pool
+
+def sq(n):
+    return n * n
+
+if __name__ == "__main__":
+    with Pool(2) as pool:
+        print(pool.map(sq, [1, 2, 3, 4]))`},
+"11-4":{d:`The global interpreter lock lets only one thread execute Python bytecode at a time inside a process, so threads speed up I/O waiting but give no gain on CPU-bound code.`,c:`import threading
+from time import perf_counter
+def spin():
+    return sum(i * i for i in range(2000000))
+ts = [threading.Thread(target=spin) for _ in range(2)]
+t0 = perf_counter()
+[t.start() for t in ts]; [t.join() for t in ts]
+print(round(perf_counter() - t0, 3))`,p:`Measure and print two numbers: the seconds taken to run a CPU-bound sum once on the main thread, and the seconds taken to run it in two threads.`,s:`import threading
+from time import perf_counter
+def spin(n):
+    return sum(i * i for i in range(n))
+n = 2000000
+t0 = perf_counter()
+spin(n)
+serial = perf_counter() - t0
+ts = [threading.Thread(target=spin, args=(n,)) for _ in range(2)]
+t0 = perf_counter()
+[t.start() for t in ts]; [t.join() for t in ts]
+print(round(serial, 3), round(perf_counter() - t0, 3))`},
+"11-5":{d:`asyncio is a single-threaded event loop where coroutines hand control back at await points, giving cooperative concurrency for many I/O-bound connections without threads.`,c:`import asyncio
+async def main():
+    await asyncio.sleep(0.05)
+    print("work done")
+asyncio.run(main())`,p:`Write an asyncio program that runs two sleep coroutines concurrently with asyncio.gather and prints the elapsed time in seconds rounded to three decimals.`,s:`import asyncio
+from time import perf_counter
+
+async def job(n):
+    await asyncio.sleep(n)
+
+async def main():
+    start = perf_counter()
+    await asyncio.gather(job(0.1), job(0.1))
+    print(round(perf_counter() - start, 3))
+
+asyncio.run(main())`},
+"11-6":{d:`An async def function is a coroutine that suspends at await instead of blocking the thread, which frees the event loop to run other tasks while it waits on I/O.`,c:`import asyncio
+async def fetch(n):
+    await asyncio.sleep(0.05)
+    return n * 2
+async def main():
+    print(await fetch(21))
+asyncio.run(main())`,p:`Define a coroutine that awaits a short sleep and returns its argument doubled, then print that result from a main coroutine run with asyncio.run.`,s:`import asyncio
+
+async def double(n):
+    await asyncio.sleep(0.05)
+    return n * 2
+
+async def main():
+    print(await double(21))
+
+asyncio.run(main())`},
+"11-7":{d:`asyncio.gather schedules several awaitables on the event loop and waits for all of them together, returning their results in the order the awaitables were passed in.`,c:`import asyncio
+async def job(n):
+    await asyncio.sleep(0.05)
+    return n * 2
+async def main():
+    print(await asyncio.gather(job(1), job(2), job(3)))
+asyncio.run(main())`,p:`Run three async jobs, each of which sleeps briefly and returns its argument doubled, then print the single list of results gathered by asyncio.gather.`,s:`import asyncio
+
+async def job(n):
+    await asyncio.sleep(0.05)
+    return n * 2
+
+async def main():
+    print(await asyncio.gather(job(1), job(2), job(3)))
+
+asyncio.run(main())`},
+"11-8":{d:`multiprocessing.Queue is a thread-safe pipe that lets one process hand work items to worker processes and collect their results, which is the foundation of a hand-rolled process pool.`,c:`from multiprocessing import Process, Queue
+def worker(q):
+    q.put(q.get() * 2)
+if __name__ == "__main__":
+    q = Queue(); p = Process(target=worker, args=(q,))
+    p.start(); q.put(21); print(q.get()); p.join()`,p:`Send the number 5 to a worker process through a Queue, have the worker square it and put the result back on the same Queue, then print that result.`,s:`from multiprocessing import Process, Queue
+
+def worker(q):
+    q.put(q.get() ** 2)
+
+if __name__ == "__main__":
+    q = Queue()
+    p = Process(target=worker, args=(q,))
+    p.start()
+    q.put(5)
+    print(q.get())
+    p.join()`}
+};
 var DATA=Object.assign({},DATA_P1,DATA_P2,DATA_P3,DATA_P4);
+var DATA_CPP=Object.assign({},RDM_CPP1,RDM_CPP2,RDM_CPP3);
+var DATA_PY=Object.assign({},RDM_PY1,RDM_PY2,RDM_PY3);
+let L_CPP=[
+["C++ Foundations",0,"Program structure|Comments|Variables and data types|const and constexpr|Type casting|Operators|Input and output|if/else|switch|Loops|Arrays|std::string basics"],
+["Functions and Scope",0,"Defining functions|Default arguments|Pass by value vs reference|Return types|Function overloading|Function templates|Lambda expressions|Recursion|Namespaces|Header files and includes|Scope and shadowing"],
+["Classes and Objects",1,"Class basics|Objects and instances|Constructors|Destructors|this pointer|Access specifiers|static members|const member functions|Operator overloading|friend functions|Copy and move|Composition"],
+["Inheritance and Polymorphism",1,"Inheritance|Access in derived classes|Constructors and inheritance|virtual functions|Pure virtual functions|Abstract classes|Overriding rules|Multiple inheritance|Dynamic casts and typeid"],
+["Pointers and Memory",1,"Pointer basics|Pointer arithmetic|References|The address-of operator|new and delete|malloc and free|unique_ptr|shared_ptr and weak_ptr|Memory leaks and dangling pointers"],
+["STL Containers",1,"std::vector|std::list|std::deque|std::map|std::unordered_map|std::set|std::unordered_set|std::stack|std::queue and std::deque as queues|std::pair and std::tuple|Nested containers"],
+["STL Algorithms and Iterators",2,"Iterator categories|Range-based for|std::sort|std::find and std::find_if|std::count|std::accumulate|std::transform|std::remove_if|Choosing an algorithm"],
+["Strings, Streams and Files",1,"std::string methods|std::string_view|iostream streams|getline|File input with ifstream|File output with ofstream|String formatting|The std::regex class"],
+["Exceptions and Errors",1,"Exceptions basics|throw|try and catch|Rethrowing|Custom exception classes|noexcept|Exception safety|assert"],
+["Templates and Generic Code",2,"Function templates|Class templates|Template specialization|Variadic templates|constexpr functions|Type traits|SFINAE basics|CRTP and compile-time polymorphism"],
+["Concurrency",2,"std::thread|std::mutex|lock_guard and unique_lock|std::condition_variable|std::atomic|std::async and std::future|Thread pools|Deadlocks and data races"],
+["Modern C++",2,"auto and type deduction|Move semantics|Rule of zero|The five rules|constexpr if|nullptr|const correctness|Structured bindings"]
+];
+
+let L_PY=[
+["Python Foundations",0,"Comments and docstrings|Variables and naming|Data types|Operators|Type conversion|Strings|f-strings and formatting|Input and output|if/elif/else|Loops|Lists"],
+["Built-in Data Structures",0,"Tuples|Sets|Dictionaries|Nested structures|Slicing|List comprehension|Dict and set comprehension|Sorting and its key|Iterating over a dict|Copying versus deep copying"],
+["Functions",1,"Defining functions|Arguments|Default and keyword arguments|*args and **kwargs|Return values and tuples|Scope and the LEGB rule|Closures|Lambda|Recursion|Type hints"],
+["Modules and Packages",1,"Modules|Packages and __init__.py|Import styles|The main guard|pip|Virtual environments|requirements.txt|Relative imports|The standard library map"],
+["Object-Oriented Python",1,"Classes|Instances and __init__|Instance vs class attributes|Instance methods|Inheritance|super()|Method resolution order|Static and class methods|Properties and setters|Dataclasses|Enums"],
+["Errors and Exceptions",1,"Exceptions basics|try and except|else and finally|Raising exceptions|Custom exceptions|Chaining with from|Assertions|The with statement"],
+["Files, Paths and Data",1,"Reading text files|Writing text files|The with statement for files|Reading and writing CSV|Working with JSON|pathlib|Binary files|Environment variables"],
+["Standard Library Tour",1,"os and sys|datetime|math and random|collections|itertools|functools|re|json|argparse|statistics|uuid"],
+["Functional and Comprehension Techniques",2,"Nested comprehensions|map, filter and reduce|zip|any and all|sorted with a key|groupby|bisect|Counter and defaultdict"],
+["Data Structures from Scratch",2,"Stack|Queue and deque|Linked list|Hash table|Binary search tree|Heap|Trie|Graph|Union-find"],
+["Algorithms and Complexity",2,"Big-O notation|Sorting algorithms|Searching|Two pointers|Sliding window|Greedy algorithms|Dynamic programming|Backtracking|Graph BFS and DFS"],
+["Concurrency and Async",2,"Concurrency vs parallelism|threading|ThreadPoolExecutor|multiprocessing|The GIL|asyncio|Coroutines and await|asyncio.gather|Queues between processes"]
+];
+const mk=a=>a.map(([n,b,t],i)=>{const p=t.split("|");return{n,i,t:p.map((x,j)=>({id:i+"-"+j,x,d:Math.min(2,b+(j>=p.length*.6&&b<2?1:0))}))}});
+L_CPP=mk(L_CPP);L_PY=mk(L_PY);
 const B=["Core syntax and control flow.","Model real-world problems with objects.","Handle errors gracefully.","Store and process groups of data.","Language features used in real projects.","Write concise, declarative code.","Run tasks concurrently.","Understand how Java runs under the hood.","Connect Java programs to databases.","Practise problem solving for interviews.","Build enterprise apps with Spring.","Secure, test and ship real backends."];
+const B_CPP=["Write correct C++ that the compiler can help you with.","Break a program into functions and pass data safely.","Model problems as classes that own their behaviour.","Build type hierarchies that stay safe to extend.","Own memory deliberately instead of hoping it gets freed.","Pick the right standard container for the job.","Work on ranges instead of writing loops by hand.","Read, write and format text and files.","Handle failure without leaking resources.","Write code once and let the compiler generate the rest.","Run work in parallel without corrupting shared state.","Write C++ that is short, safe and modern."];
+const B_PY=["Get comfortable with the language in an afternoon.","Pick the right container and the right way to copy it.","Package behaviour into reusable, testable functions.","Split a project into modules and reuse other code.","Use classes when state and behaviour belong together.","Fail loudly in development, gracefully in production.","Read and write files without losing data on the way.","Know what ships with Python before reaching for a package.","Express transformations concisely and readably.","Build the classic data structures to see how they work.","Analyse and apply the classic algorithms.","Overlap waiting time without losing correctness."];
+ROADMAPS={java:{n:"Java",L:L,D:DATA,b:B,key:"jmr-progress",done:loadDone("jmr-progress")},cpp:{n:"C++",L:L_CPP,D:DATA_CPP,b:B_CPP,key:"jmr-progress-cpp",done:loadDone("jmr-progress-cpp")},py:{n:"Python",L:L_PY,D:DATA_PY,b:B_PY,key:"jmr-progress-py",done:loadDone("jmr-progress-py")}};
+function renderRoadmap(){const Lv=R().L;
+tl.innerHTML=Lv.map(l=>`<section class="lv" id="lv${l.i}"><div class="num">${l.i+1}</div><div class="lh" tabindex="0" role="button"><h2><span class="car">▾</span> Level ${l.i+1} — ${l.n}</h2><span id="lc${l.i}"></span></div><div class="bar"><i id="lb${l.i}"></i></div><div class="grid">${l.t.map(t=>`<button class="c" data-id="${t.id}" aria-pressed="false"><span class="chk">✓</span><b>${t.x}</b><span class="badge d${t.d}">${DN[t.d]}</span></button>`).join("")}</div></section>`).join("");
+if(ro)ro.disconnect();
+ro=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");ro.unobserve(x.target)}}),{threshold:.05});
+document.querySelectorAll(".lv").forEach(el=>ro.observe(el));
+Lv.forEach(l=>{if(l.t.every(t=>R().done[t.id]))$("lv"+l.i).classList.add("col")});
+upd()}
 let cur=null;const md=$("md");
-function mbtn(){$("mt").textContent=done[cur]?"✓ Completed (undo)":"Mark as completed"}
-function openM(id){cur=id;const[i,j]=id.split("-"),l=L[i],t=l.t[j],f=DATA[id];
+function mbtn(){$("mt").textContent=R().done[cur]?"✓ Completed (undo)":"Mark as completed"}
+function openM(id){cur=id;const Lv=R().L;const[i,j]=id.split("-"),l=Lv[i],t=l.t[j],f=R().D[id];
 $("mh").textContent=t.x;$("mb").innerHTML=`<span class="badge">Level ${l.i+1}</span><span class="badge d${t.d}">${DN[t.d]}</span>`;
-$("mp").textContent=(f&&f.d)||`${t.x} is part of Level ${l.i+1} — ${l.n}. Goal: ${B[l.i]} Read about it, practise with small programs, then mark it complete.`;
+$("mp").textContent=(f&&f.d)||`${t.x} is part of Level ${l.i+1} — ${l.n}. Goal: ${R().b[l.i]} Read about it, practise with small programs, then mark it complete.`;
 $("mc").textContent=(f&&f.c)||"";$("mc").hidden=!$("mc").textContent;
 $("mpb").textContent=(f&&f.p)||"";$("ms").textContent=(f&&f.s)||"";$("px").hidden=!$("mpb").textContent;
-$("ml").href="https://www.google.com/search?q="+encodeURIComponent("java "+t.x+" tutorial");mbtn();md.showModal()}
-$("mt").onclick=()=>{done[cur]?delete done[cur]:done[cur]=1;save();upd();mbtn()};
+$("ml").href="https://www.google.com/search?q="+encodeURIComponent(R().n+" "+t.x+" tutorial");mbtn();md.showModal()}
+$("mt").onclick=()=>{const d=R().done;d[cur]?delete d[cur]:d[cur]=1;save();upd();mbtn()};
 $("mx").onclick=()=>md.close();md.onclick=e=>{if(e.target===md)md.close()};
-tl.addEventListener("click",e=>{const h=e.target.closest(".lh");if(h){h.parentElement.classList.toggle("col");return}const c=e.target.closest(".c");if(!c)return;const k=c.dataset.id;if(e.target.closest(".chk")){done[k]?delete done[k]:done[k]=1;save();upd()}else openM(k)});
+tl.addEventListener("click",e=>{const h=e.target.closest(".lh");if(h){h.parentElement.classList.toggle("col");return}const c=e.target.closest(".c");if(!c)return;const k=c.dataset.id;if(e.target.closest(".chk")){const d=R().done;d[k]?delete d[k]:d[k]=1;save();upd()}else openM(k)});
 tl.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList.contains("lh"))e.target.click()});
 let fd="",ac=false;
-function filt(){const q=$("q").value.trim().toLowerCase();let n=0;L.forEach(l=>{let v=0;l.t.forEach(t=>{const ok=(!q||t.x.toLowerCase().includes(q))&&(fd===""||t.d==fd);document.querySelector(`[data-id="${t.id}"]`).hidden=!ok;v+=ok});$("lv"+l.i).hidden=!v;n+=v});tl.classList.toggle("flt",!!q||fd!=="");$("nr").hidden=!!n}
+function filt(){const q=$("q").value.trim().toLowerCase();let n=0;R().L.forEach(l=>{let v=0;l.t.forEach(t=>{const ok=(!q||t.x.toLowerCase().includes(q))&&(fd===""||t.d==fd);document.querySelector(`[data-id="${t.id}"]`).hidden=!ok;v+=ok});$("lv"+l.i).hidden=!v;n+=v});tl.classList.toggle("flt",!!q||fd!=="");$("nr").hidden=!!n}
 $("q").oninput=filt;
 $("ch").onclick=e=>{const b=e.target.closest("button");if(!b)return;fd=b.dataset.d;[...$("ch").children].forEach(x=>x.classList.toggle("on",x===b));filt()};
 $("ex").onclick=()=>{ac=!ac;document.querySelectorAll(".lv").forEach(x=>x.classList.toggle("col",ac));$("ex").textContent=ac?"Expand all":"Collapse all"};
-function cont(){for(const l of L){const t=l.t.find(t=>!done[t.id]);if(t){$("lv"+l.i).classList.remove("col");const c=document.querySelector(`[data-id="${t.id}"]`);c.scrollIntoView({block:"center"});c.animate([{boxShadow:"0 0 0 0 #f89820"},{boxShadow:"0 0 0 10px transparent"}],{duration:900,iterations:2});return}}$("roadmap").scrollIntoView()}
+function cont(){for(const l of R().L){const t=l.t.find(t=>!R().done[t.id]);if(t){$("lv"+l.i).classList.remove("col");const c=document.querySelector(`[data-id="${t.id}"]`);c.scrollIntoView({block:"center"});c.animate([{boxShadow:"0 0 0 0 #f89820"},{boxShadow:"0 0 0 10px transparent"}],{duration:900,iterations:2});return}}$("roadmap").scrollIntoView()}
 $("ct").onclick=cont;
-$("rs").onclick=()=>{if(confirm("Reset all progress?")){done={};save();upd()}};
+$("rs").onclick=()=>{if(confirm("Reset all "+R().n+" progress?")){R().done={};save();upd()}};
 $("start").onclick=e=>{e.preventDefault();cont()};
+$("lt").addEventListener("click",e=>{const b=e.target.closest("button[data-rl]");if(!b)return;RL=b.dataset.rl;[...$("lt").querySelectorAll("button")].forEach(x=>x.classList.toggle("on",x===b));renderRoadmap();$("q").value="";fd="";[...$("ch").children].forEach(x=>x.classList.toggle("on",x.dataset.d===""));filt();if(typeof setPref==="function")setPref("rl",RL)});
 const root=document.documentElement,tb=$("th");
 function theme(t){root.dataset.theme=t;tb.textContent=t==="dark"?"🌙":"☀️"}
 theme("dark");tb.onclick=()=>theme(root.dataset.theme==="dark"?"light":"dark");
-const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}}),{threshold:.05});
-document.querySelectorAll(".lv").forEach(el=>io.observe(el));
-upd();L.forEach(l=>{if(l.t.every(t=>done[t.id]))$("lv"+l.i).classList.add("col")});
+renderRoadmap();
 var PROB_SET1 = [
 {t: `Two Sum`, d: 0, n: 1, g: `Arrays|Hashing`, q: `Given an integer array nums and an integer target, return the indices of the two numbers that add up to target. Exactly one solution exists, and you may not use the same element twice, so the two indices must be different. Return the two indices in any order, and it is guaranteed that at least one pair works.`, s: `import java.util.HashMap;
 import java.util.Map;
@@ -7817,6 +11035,7 @@ else if(e.key==="Enter"&&e.target.id==="vr")cont();
 const PKEY="jmr-prefs";let prefs={};
 try{prefs=JSON.parse(localStorage.getItem(PKEY)||"{}")}catch(e){}
 const savePrefs=()=>{try{localStorage.setItem(PKEY,JSON.stringify(prefs))}catch(e){}};
+const setPref=(k,v)=>{prefs[k]=v;savePrefs()};
 
 const syncNav=()=>{$("np").textContent=$("viewP").hidden?($("viewL").hidden?$("op").textContent:$("lpp").textContent):$("pp").textContent};
 const _view=view;view=function(v){_view(v);prefs.v=v;savePrefs();syncNav()};
