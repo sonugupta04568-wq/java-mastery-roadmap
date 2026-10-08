@@ -87,18 +87,24 @@ python -m http.server 8000
 
 - Three tabs: Roadmap, Problems and Languages, switched with `1`, `2` and `3`
 - Three roadmaps in the first tab: Java, C++ and Python, each with independent progress
+- On a wide screen the Roadmap tab grows a sticky level sidebar with live progress,
+  and the page widens from 1000px to 1240px
+- `Ctrl`+`K` opens a command palette that searches all 378 roadmap topics, 164
+  problems and 101 syntax topics at once, and jumps straight to them
+- `j` / `k` move between cards, `x` ticks the focused card
+- Problem grid has a compact / comfortable density toggle
 - Dark and light theme, remembered for the session
 - Search and difficulty filters on every tab
 - "Continue" jumps to your first incomplete topic; "Next unsolved" does the same
   for the problem bank
-- copy-to-clipboard on every code block
+- copy-to-clipboard on every code block and on both comparison tables
 - toast notifications for every completion
 - back-to-top floating button once you scroll past the hero
 - progress bars at the roadmap level, the topic level, per problem section and per
   language
 - per-level, per-topic and per-language collapse
-- progress, filters and the active tab persist across reloads
-- responsive layout, works on a phone
+- progress, filters, active tab and active roadmap persist across reloads
+- responsive layout: bottom-sheet dialogs and scrollable tab strips on a phone
 - respects `prefers-reduced-motion`
 
 ## Notes

@@ -131,6 +131,39 @@ table.cmp tr:last-child td{border-bottom:0}
 @media(max-width:560px){dialog{width:100vw;max-width:100vw;position:fixed;inset:auto 0 0 0;margin:0;
 border-radius:18px 18px 0 0;max-height:92vh;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 dialog::backdrop{background:rgba(0,0,0,.65)}}
+/* ---- wide screens ---- */
+@media(min-width:1080px){
+main{max-width:1240px}
+#viewR{display:grid;grid-template-columns:236px minmax(0,1fr);column-gap:30px;align-items:start}
+#toc{grid-column:1;grid-row:1/span 60;position:sticky;top:calc(env(safe-area-inset-top,0px) + 78px);max-height:calc(100vh - 104px);overflow-y:auto;padding-right:6px}
+#viewR>:not(#toc){grid-column:2}
+.tocrow{display:flex;gap:9px;align-items:baseline;width:100%;text-align:left;background:none;border:0;color:var(--muted);font:inherit;font-size:.83rem;padding:6px 9px;border-radius:9px;cursor:pointer}
+.tocrow:hover{background:var(--card);color:var(--text)}
+.tocrow.on{color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,transparent)}
+.tocrow b{font-weight:700;flex:none;width:16px;color:var(--acc)}
+.tocrow span{flex:1}
+.tocrow i{font-style:normal;font-size:.72rem;color:var(--muted);flex:none}
+.toccount{margin:0 0 8px 9px;font-size:.72rem;color:var(--muted)}
+dialog{width:min(720px,92vw)}
+#psw.compact{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+#psw.compact .pc{min-height:0;padding:10px 34px 10px 12px;gap:5px}
+#psw.compact .pc b{font-size:.88rem}
+}
+@media(min-width:1500px){
+main{max-width:1400px}
+.pg{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+}
+.pal{width:min(620px,94vw);padding:0;overflow:hidden}
+.pal input{width:100%;border:0;border-bottom:1px solid var(--line);background:var(--bg2);color:var(--text);padding:16px 18px;font:inherit;font-size:1rem;border-radius:0}
+.pal input:focus{outline:none}
+#cmdl{list-style:none;margin:0;padding:6px;max-height:min(52vh,420px);overflow-y:auto}
+#cmdl li{display:flex;gap:10px;align-items:baseline;padding:9px 12px;border-radius:9px;cursor:pointer}
+#cmdl li.on{background:color-mix(in srgb,var(--acc) 16%,transparent)}
+#cmdl b{font-weight:600;font-size:.94rem}
+#cmdl .g{font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);flex:none}
+#cmdl .d{font-size:.78rem;color:var(--muted);margin-left:auto;flex:none;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cmdl .none{padding:14px;color:var(--muted);font-size:.88rem}
+.cmdtip{margin:0;padding:10px 16px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted)}
 @media(prefers-reduced-motion:reduce){.toast{animation:none}#top{transition:none}}
 </style>
 </head>
@@ -148,6 +181,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <main id="roadmap">
 <div class="vt"><button id="vr" class="on" type="button">Roadmap</button><button id="vpb" type="button">Problems</button><button id="vl" type="button">Languages</button></div>
 <div id="viewR">
+<nav id="toc" aria-label="Level shortcuts"></nav>
 <div class="lt" id="lt"><span class="lbl">Roadmap for</span><button class="on" type="button" data-rl="java">Java</button><button type="button" data-rl="cpp">C++</button><button type="button" data-rl="py">Python</button></div>
 <div class="ov"><div class="row"><span>Your Progress <small id="oc"></small></span><b id="op">0%</b></div><div class="bar"><i id="ob"></i></div><button class="rst" id="rs">Reset progress</button></div>
 <div class="tb"><input id="q" type="search" placeholder="Search topics…" aria-label="Search topics"><div class="ch" id="ch"><button class="on" data-d="">All</button><button data-d="0">Beginner</button><button data-d="1">Intermediate</button><button data-d="2">Advanced</button></div><button class="ic" id="ct">▶ Continue</button><button class="ic" id="ex">Collapse all</button></div>
@@ -156,7 +190,7 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 </div>
 <section id="viewP" hidden>
 <div class="ov"><div class="row"><span>Problems solved <small id="pcn"></small></span><b id="pp">0%</b></div><div class="bar"><i id="pb"></i></div><button class="rst" id="prs">Reset solved</button></div>
-<div class="tb"><input id="pq" type="search" placeholder="Search problems&hellip;" aria-label="Search problems"><div class="ch" id="pch"><button class="on" data-d="">All</button><button data-d="0">Easy</button><button data-d="1">Medium</button><button data-d="2">Hard</button></div><button class="ic" id="pctn">&#9654; Next unsolved</button><select id="pt" aria-label="Filter by topic"></select><button class="ic" id="psh">Solved at top</button></div>
+<div class="tb"><input id="pq" type="search" placeholder="Search problems&hellip;" aria-label="Search problems"><div class="ch" id="pch"><button class="on" data-d="">All</button><button data-d="0">Easy</button><button data-d="1">Medium</button><button data-d="2">Hard</button></div><button class="ic" id="pctn">&#9654; Next unsolved</button><select id="pt" aria-label="Filter by topic"></select><button class="ic" id="psh">Solved at top</button><button class="ic" id="dns">Compact view</button></div>
 <p id="pno" hidden style="color:var(--muted)">No problems match your search.<button class="clr" id="clrP" type="button">Clear filters</button></p>
 <div id="psw"></div>
 </section>
@@ -169,9 +203,10 @@ dialog::backdrop{background:rgba(0,0,0,.65)}}
 <div id="lsw"></div>
 </section>
 </main>
-<footer>Every topic has an explanation, a code example and a practice problem with a solution. The Problems tab is a LeetCode-style bank grouped topic by topic, searchable and filterable by difficulty. Click a card for details; tap its circle to mark it complete. Progress is saved in your browser. Happy coding! ☕<p class="hints"><span class="kbd">/</span> search<span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span> tabs<span class="kbd">Esc</span> clear<span class="kbd">?</span> all shortcuts</p></footer>
+<footer>Every topic has an explanation, a code example and a practice problem with a solution. The Problems tab is a LeetCode-style bank grouped topic by topic, searchable and filterable by difficulty. Click a card for details; tap its circle to mark it complete. Progress is saved in your browser. Happy coding! ☕<p class="hints"><span class="kbd">/</span> search<span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span> tabs<span class="kbd">Esc</span> clear<span class="kbd">Ctrl</span>+<span class="kbd">K</span> jump to anything<span class="kbd">j</span><span class="kbd">k</span> move<span class="kbd">x</span> tick<span class="kbd">?</span> all shortcuts</p></footer>
 <dialog id="md"><h3 id="mh"></h3><div id="mb"></div><h4>What it is</h4><p id="mp"></p><h4>Code example</h4><div class="pw"><button class="cb" type="button" data-cp="mc" aria-label="Copy code to clipboard">Copy</button><pre id="mc"></pre></div><div id="px"><h4>Practice problem</h4><div class="pw"><button class="cb" type="button" data-cp="mpb" aria-label="Copy code to clipboard">Copy</button><pre id="mpb" class="pb"></pre></div><h4>Solution</h4><div class="pw"><button class="cb" type="button" data-cp="ms" aria-label="Copy code to clipboard">Copy</button><pre id="ms"></pre></div></div><div class="ma"><button class="btn p" id="mt"></button><button class="btn" id="mx">Close</button><a id="ml" target="_blank" rel="noopener">Learn more ↗</a></div></dialog>
 <dialog id="pmd"><h3 id="pmh"></h3><div id="pmb"></div><h4>Problem</h4><p id="pmq"></p><h4>Java solution</h4><div class="pw"><button class="cb" type="button" data-cp="pms" aria-label="Copy code to clipboard">Copy</button><pre id="pms"></pre></div><div class="ma"><button class="btn p" id="pmt"></button><button class="btn" id="pmx">Close</button><a id="pml" target="_blank" rel="noopener">Find on LeetCode &#8599;</a></div></dialog>
+<dialog id="cmd" class="pal"><input id="cmdq" type="text" placeholder="Jump to a topic, problem or syntax page&hellip;" aria-label="Search everything" autocomplete="off" spellcheck="false"><ul id="cmdl" role="listbox" aria-label="Results"></ul><p class="cmdtip"><span class="kbd">&uarr;</span><span class="kbd">&darr;</span> move <span class="kbd">Enter</span> open <span class="kbd">Esc</span> close <span class="kbd">Ctrl</span>+<span class="kbd">K</span> open</p></dialog>
 <script>
 const L=[
 ["Java Fundamentals",0,"JDK, JRE, JVM|Java Program Structure|Variables & Data Types|Type Casting|Operators|Input/Output|if/else|switch|Loops|Arrays|Strings|Comments & Naming|Math Class"],
@@ -189,7 +224,7 @@ const L=[
 ].map(([n,b,t],i)=>{const a=t.split("|");return{n,i,t:a.map((x,j)=>({id:i+"-"+j,x,d:Math.min(2,b+(j>=a.length*.6&&b<2?1:0))}))}});
 const DN=["Beginner","Intermediate","Advanced"];
 const $=id=>document.getElementById(id),tl=$("tl");
-let RL="java",ROADMAPS=null,ro=null;
+let RL="java",ROADMAPS=null,ro=null,TOCREADY=false;
 const R=()=>ROADMAPS[RL];
 const loadDone=k=>{try{return JSON.parse(localStorage.getItem(k)||"{}")}catch(e){return {}}};
 const save=()=>{try{localStorage.setItem(R().key,JSON.stringify(R().done))}catch(e){}};
@@ -5812,21 +5847,21 @@ async def main():
 
 asyncio.run(main())`},
 "11-8":{d:`multiprocessing.Queue is a thread-safe pipe that lets one process hand work items to worker processes and collect their results, which is the foundation of a hand-rolled process pool.`,c:`from multiprocessing import Process, Queue
-def worker(q):
-    q.put(q.get() * 2)
+def worker(t, r):
+    r.put(t.get() * 2)
 if __name__ == "__main__":
-    q = Queue(); p = Process(target=worker, args=(q,))
-    p.start(); q.put(21); print(q.get()); p.join()`,p:`Send the number 5 to a worker process through a Queue, have the worker square it and put the result back on the same Queue, then print that result.`,s:`from multiprocessing import Process, Queue
+    t, r = Queue(), Queue(); p = Process(target=worker, args=(t, r))
+    p.start(); t.put(21); print(r.get()); p.join()`,p:`Send the number 5 to a worker process through a task Queue, have the worker square it and put the result on a second result Queue, then print that result.`,s:`from multiprocessing import Process, Queue
 
-def worker(q):
-    q.put(q.get() ** 2)
+def worker(t, r):
+    r.put(t.get() ** 2)
 
 if __name__ == "__main__":
-    q = Queue()
-    p = Process(target=worker, args=(q,))
+    t, r = Queue(), Queue()
+    p = Process(target=worker, args=(t, r))
     p.start()
-    q.put(5)
-    print(q.get())
+    t.put(5)
+    print(r.get())
     p.join()`}
 };
 var DATA=Object.assign({},DATA_P1,DATA_P2,DATA_P3,DATA_P4);
@@ -5873,7 +5908,7 @@ if(ro)ro.disconnect();
 ro=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");ro.unobserve(x.target)}}),{threshold:.05});
 document.querySelectorAll(".lv").forEach(el=>ro.observe(el));
 Lv.forEach(l=>{if(l.t.every(t=>R().done[t.id]))$("lv"+l.i).classList.add("col")});
-upd()}
+if(TOCREADY){renderToc();watchLevels()}upd()}
 let cur=null;const md=$("md");
 function mbtn(){$("mt").textContent=R().done[cur]?"✓ Completed (undo)":"Mark as completed"}
 function openM(id){cur=id;const Lv=R().L;const[i,j]=id.split("-"),l=Lv[i],t=l.t[j],f=R().D[id];
@@ -11016,6 +11051,80 @@ const tb=document.getElementById(b.dataset.cptbl);if(!tb)return;
 const text=[...tb.rows].map(r=>[...r.cells].map(c=>c.innerText.trim()).join("\t")).join("\n");
 const ok=()=>toast("Table copied as text",1);
 if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(ok,()=>toast("Copy failed - select the text instead"));else ok()});
+
+/* ---------- laptop: table of contents, command palette, key nav ---------- */
+const toc=$("toc");TOCREADY=true;
+function renderToc(){const Lv=R().L,dn=R().done;
+let T=0,D=0;Lv.forEach(l=>{T+=l.t.length});
+toc.innerHTML='<p class="toccount">'+R().n+" &middot; "+Lv.length+" levels &middot; "+T+" topics</p>"+
+Lv.map(l=>{const n=l.t.filter(t=>dn[t.id]).length;
+return '<button class="tocrow" type="button" data-tl="'+l.i+'"><b>'+(l.i+1)+
+'</b><span>'+l.n+'</span><i>'+n+"/"+l.t.length+"</i></button>"}).join("");
+toc.addEventListener("click",e=>{const b=e.target.closest("[data-tl]");if(!b)return;
+const i=b.dataset.tl,sec=$("lv"+i);sec.classList.remove("col");
+const y=sec.getBoundingClientRect().top+scrollY-78;
+scrollTo({top:y,behavior:"smooth"});
+setToc(+i)});
+}
+function setToc(i){[...toc.querySelectorAll(".tocrow")].forEach(b=>b.classList.toggle("on",+b.dataset.tl===i))}
+let spy=null;
+function watchLevels(){if(spy)spy.disconnect();
+spy=new IntersectionObserver(es=>{const vis=es.filter(e=>e.isIntersecting)
+.sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+if(vis.length)setToc(+vis[0].target.id.slice(2))},{rootMargin:"-80px 0px -55% 0px",threshold:0});
+document.querySelectorAll("#tl .lv").forEach(s=>spy.observe(s))}
+
+const CMD=[];
+Object.keys(ROADMAPS).forEach(k=>ROADMAPS[k].L.forEach(l=>l.t.forEach(t=>
+CMD.push({g:"Roadmap",n:t.x,d:ROADMAPS[k].n+" \u00b7 "+l.n,k:"rm",v:[k,t.id]}))));
+PROB.forEach((p,i)=>CMD.push({g:"Problem",n:p.t,d:PDN[p.d]+" \u00b7 #"+(p.n||i),k:"pb",v:i}));
+LANGTOPICS.forEach((ts,li)=>ts.forEach((t,j)=>
+CMD.push({g:"Syntax",n:t,d:LANGNAME[li],k:"ln",v:[li,j]})));
+const cmd=$("cmd"),cmdq=$("cmdq"),cmdl=$("cmdl");
+let cmdRes=[],cmdAt=0;
+function cmdRun(it){const x=it||cmdRes[cmdAt];if(!x)return;cmd.close();
+if(x.k==="rm"){RL=x.v[0];[...$("lt").querySelectorAll("button")].forEach(b=>b.classList.toggle("on",b.dataset.rl===RL));
+renderRoadmap();view("r");setTimeout(()=>openM(x.v[1]),30)}
+else if(x.k==="pb"){view("p");setTimeout(()=>openP(x.v),30)}
+else{view("l");$("lq").value="";lq="";setTimeout(()=>{document.querySelectorAll("#lch button")[x.v[0]].click();
+const s=document.querySelector('#lsw .lsec[data-id="'+x.v[0]+"-"+x.v[1]+'"]');
+if(s){s.classList.remove("col");s.scrollIntoView({block:"center"})}},30)}}
+function cmdFilter(){const q=cmdq.value.trim().toLowerCase();
+cmdRes=!q?CMD.slice(0,40):CMD.filter(c=>c.n.toLowerCase().includes(q)).slice(0,40);
+cmdAt=0;
+cmdl.innerHTML=cmdRes.length?cmdRes.map((c,i)=>
+'<li role="option" data-i="'+i+'" class="'+(i===0?"on":"")+'"><span class="g">'+c.g+'</span><b>'+esc(c.n)+
+'</b><span class="d">'+esc(c.d)+"</span></li>").join("")
+:'<li class="none">Nothing matches that.</li>';
+cmdl.scrollTop=0}
+cmdq.oninput=cmdFilter;
+cmdl.onclick=e=>{const li=e.target.closest("[data-i]");if(li)cmdRun(cmdRes[+li.dataset.i])};
+cmdq.onkeydown=e=>{
+if(e.key==="ArrowDown"&&cmdRes.length){e.preventDefault();cmdAt=(cmdAt+1)%cmdRes.length}
+else if(e.key==="ArrowUp"&&cmdRes.length){e.preventDefault();cmdAt=(cmdAt-1+cmdRes.length)%cmdRes.length}
+else if(e.key==="Enter"){e.preventDefault();cmdRun()}
+else return;
+[...cmdl.querySelectorAll("[data-i]")].forEach((n,i)=>n.classList.toggle("on",i===cmdAt));
+const on=cmdl.querySelector("li.on");if(on)on.scrollIntoView({block:"nearest"})};
+cmd.onclick=e=>{if(e.target===cmd)cmd.close()};
+function cmdOpen(){cmdq.value="";cmdFilter();cmd.showModal();cmdq.focus()}
+addEventListener("keydown",e=>{
+if((e.ctrlKey||e.metaKey)&&(e.key==="k"||e.key==="K")){e.preventDefault();cmdOpen();return}
+if(isTyping(e)||document.querySelector("dialog[open]"))return;
+if(e.key==="j"||e.key==="k"){const v=$("viewP").hidden?($("viewL").hidden?"#viewR":"#viewL"):"#viewP";
+const c=[...document.querySelectorAll(v+" .c,"+v+" .pc")].filter(x=>x.offsetParent!==null);
+if(!c.length)return;e.preventDefault();const i=c.indexOf(document.activeElement);
+c[e.key==="j"?Math.min(c.length-1,i+1):Math.max(0,i<0?0:i-1)].focus()}
+else if(e.key==="x"){const a=document.activeElement;
+if(a&&(a.classList.contains("c")||a.classList.contains("pc"))){e.preventDefault();a.querySelector(".chk").click()}}
+});
+
+/* compact / comfortable problem grid */
+$("dns").onclick=()=>{const on=$("psw").classList.toggle("compact");
+$("dns").textContent=on?"Comfortable view":"Compact view"};
+
+/* first paint of the sidebar */
+renderToc();watchLevels();
 
 /* back to top */
 const topBtn=$("top");
